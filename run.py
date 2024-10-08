@@ -174,11 +174,11 @@ def publish_webex():
      if args.webex :
          with open(args.webex, 'r') as f:
              o = yaml.full_load(f)["WEBEX"]
-         if o["PROXY"]:
+         try:
              webex_api = WebexTeamsAPI(access_token=o["WEBEX_BOT_TOKEN"], proxies={"https": o["PROXY"]})
-         else:
+         except :
              webex_api = WebexTeamsAPI(access_token=o["WEBEX_BOT_TOKEN"])
-
+       
          webex_api.messages.create(roomId=o["WEBEX_ROOM"], markdown="Publishing Test Result " )
          webex_api.messages.create(roomId=o["WEBEX_ROOM"], files=['results/'+job_name+".html"])
 
