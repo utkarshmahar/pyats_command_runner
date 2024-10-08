@@ -1,0 +1,3725 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LogViewer</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>job</title>
+</head>
+<style type="text/css">
+    /*************************************************/
+/* Main element styling */
+
+body,
+.side-nav.fixed,
+.side-nav.fixed .collapsible li,
+.collapsible-header {
+    background-color: #fcfcfc;
+}
+
+nav, nav .nav-wrapper i, .side-nav-head {
+    height: 50px;
+    line-height: 50px !important;
+}
+
+header, main {
+    /*padding-left: 300px;*/
+}
+.side-nav-head {
+    color: #fff;
+}
+
+main>.container {
+    padding-top: 5px;
+}
+
+main>div.row {
+    margin: 0 2rem;
+    padding-top: 1.6rem;
+}
+
+h6 {
+  margin: 0;
+  padding-top: 2px;
+}
+
+.container {
+  max-width: none !important;
+}
+
+.button-collapse, .page-title, .search {
+  display: inline-block;
+}
+
+.nav-title {
+    color: rgba(0, 0, 0, 0.87);
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 400;
+    height: 48px;
+    line-height: 48px;
+    padding: 5px 32px 0px 26px;
+}
+
+.log-view {
+    background-color: #f5f2f0 !important;
+    border: 1px solid #ddd;
+    font-family: monospace;
+    padding: 1rem 2rem;
+    margin-right: .5rem;
+}
+
+.data-list.row, .log-view {
+  font-size: 13px;
+}
+
+ul.data-list>li {
+  font-size: 14px;
+  margin: 1rem;
+}
+
+.data-list span {
+    margin-left: 1rem;
+}
+
+.time {
+  color: #00788a;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 1rem;
+}
+
+.scrollToTop {
+  -webkit-transition: none !important;
+  transition: none !important;
+}
+
+.new.badge {
+  width: 64px !important;
+  text-align: center;
+}
+
+.time.new.badge {
+  border: 1px solid #d9d9d9;
+  background-color: #f0f0f0 !important;
+  color: #737373;
+}
+
+.nav-info {
+  color: white;
+  display: flex;
+  float: right;
+}
+
+.nav-info div {
+  margin-right: 2rem;
+}
+
+.nav-info span:not(.badge) {
+  display: block;
+  height: 20px;
+  line-height: 30px;
+}
+
+.nav-info span.badge.new {
+  border: 1px solid #ffffff;
+  background-color: white !important;
+  font-weight: 700;
+  margin-top: 13.5px;
+}
+
+.toggle-data {
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  color: #737373;
+  font-size: .75rem;
+  line-height: 20px;
+  margin-left: 2rem;
+  margin-bottom: 0.3rem;
+  padding: .1rem .8rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: .1s all ease-in-out;
+}
+
+.toggle-data+.toggle-data {
+  margin-left: .5rem;
+}
+
+.toggle-data:hover {
+  background-color: #f0f0f0;
+}
+
+.editor {
+  max-height: 700px;
+  margin: 0;
+}
+
+.overview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overview table {
+  width: auto;
+}
+
+.overview table td {
+  padding: 6px 5px !important;
+}
+
+.overview table tr td:first-child {
+  min-width: 100px;
+}
+
+
+
+/*************************************************/
+/* Sidenav overrides */
+
+.side-nav {
+  width: 450px;
+}
+
+.side-nav-head span {
+  margin-left: 1.9rem;
+}
+
+.side-nav span.name {
+    width: 275px !important;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.side-nav .collapsible-header,
+.side-nav.fixed .collapsible-header {
+    overflow: hidden;
+    padding-left: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.side-nav .collapsible-header i,
+.side-nav.fixed .collapsible-header i {
+    margin-right: 15px !important;
+}
+
+.side-nav .collapsible-body li a,
+.side-nav.fixed .collapsible-body li a {
+    padding: 0 15px 0 70px;
+}
+
+.side-nav .collapsible-body li a:hover,
+.side-nav.fixed .collapsible-body li a:hover {
+    background-color: #efefef;
+}
+
+.side-nav .collapsible-body .collapsible-body li a,
+.side-nav.fixed .collapsible-body .collapsible-body li a {
+    padding-left: 85px;
+}
+
+
+
+/*************************************************/
+/* Accordion Overrides */
+
+.collapsible-body {
+    padding: 1rem 0rem 1rem 2rem;
+}
+
+.lean .collapsible-body,
+.collapsible-body,
+.collapsible-body .collapsible-header {
+    background-color: #fff;
+}
+
+.collapsible.lean {
+    box-shadow: none;
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 0px;
+}
+
+.lean .collapsible-header {
+    padding-bottom: 5px;
+}
+
+.lean .collapsible-header h5 {
+    margin: 0;
+}
+
+.lean .collapsible-header h6 {
+    font-size: 1.25rem;
+}
+
+.lean>li {
+    margin-bottom: 20px;
+}
+
+.lean .lean .collapsible-header {
+    border-bottom: 1px solid transparent;
+    transition: all .05s ease-in-out;
+}
+
+.lean .lean .collapsible-header:not(.active):hover {
+    border-bottom: 1px solid #ecebeb;
+}
+
+.lean .lean .collapsible-body:not(.log-view) {
+    border-bottom: 0px;
+    border-left: 1px solid #ddd;
+}
+
+.collapsible-header.active i:not(.state):not(.all):not(.none) {
+    padding-top: 4px;
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.collapsible-header .state {
+    font-size: 1.2rem;
+    padding-top: 4px;
+}
+
+.collapsible-header .title {
+  padding-top: 2px;
+}
+
+
+
+/*************************************************/
+/* Collapsible-header expand/collapse toggle icons */
+
+.collapsible-header .expand {
+  height: 22px;
+  margin-left: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .1s ease-in-out;
+}
+
+.collapsible-header:hover .expand,
+.collapsible-header:hover .toggle-data {
+  opacity: 1;
+  visibility: visible;
+  transition: all .1s ease-in-out;
+}
+
+.expand i {
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1 !important;
+  margin: 0;
+  padding: 0;
+  width: 24px;
+}
+
+.expand i:hover {
+  background-color: #ddd;
+  transition: all .2s ease-in-out;
+}
+
+header .expand {
+  float: right;
+  height: 35px;
+  margin-top: .8rem;
+  margin-right: 1.25rem;
+}
+
+.section {
+  padding: 0 !important;
+}
+
+.section>.collapsible-header {
+  border-width: 1px 1px 1px 1px !important;
+  border-style: solid !important;
+  border-color: #ddd !important;
+  padding-bottom: .85rem;
+}
+
+.section>.collapsible-body {
+  border-width: 0px 1px 1px 1px !important;
+  border-style: solid !important;
+  border-color: #ddd !important;
+  padding-top: 0;
+}
+
+.section>.collapsible-body .collapsible-header {
+  padding-left: 1.5rem;
+}
+
+.section>.collapsible-body .collapsible-header .title {
+  margin-left: .2rem;
+}
+
+.section>.collapsible-body>ul.collapsible {
+  margin-top: 0;
+}
+
+.section>.collapsible-body>.data-list {
+  padding-left: 0.2rem;
+}
+
+.section>.collapsible-body>.collapsible .descr{
+  padding-top: 0.5rem;
+}
+
+.section .collapsible>li:not(.logs) {
+  margin-left: .3rem;
+}
+
+.section>.collapsible-body>.collapsible-body {
+  margin-bottom: 0;
+}
+
+.section>.collapsible-header.active,
+.section>.collapsible-header.active:hover {
+  border-bottom: 1px solid transparent !important;
+}
+
+.section .collapsible-header, .section .collapsible-body {
+  background-color: #fdfdfd;
+}
+
+.lean .section:first-of-type {
+  margin-top: 1rem;
+}
+
+.logs .collapsible-body{
+  padding: 1rem !important;
+}
+
+/*************************************************/
+/* Helpers */
+
+.ml-1 {
+  margin-left: 1rem !important;
+}
+
+.ml-2 {
+  margin-left: 2rem !important;
+}
+
+.m-0 {
+  margin: 0 !important;
+}
+
+.mtb-1 {
+  margin: 1rem 0 !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.pr-1 {
+  padding-right: 1rem !important;
+}
+
+.d-inline-block {
+  display: inline-block !important;
+}
+
+.display-none {
+  display: none;
+}
+
+.d-flex {
+  display: flex;
+}
+
+
+/*************************************************/
+/* Amcharts */
+
+#chartdiv {
+    width: 100%;
+    height: 350px;
+}
+
+.amcharts-export-menu-top-right {
+    top: 10px;
+    right: 0;
+}
+
+.amcharts-chart-div>svg+a {
+    display: none !important;
+}
+
+.amcharts-pie-slice {
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  transition-duration: 0.3s;
+  transition: all .3s ease-out;
+  -webkit-transition: all .3s ease-out;
+  -moz-transition: all .3s ease-out;
+  -o-transition: all .3s ease-out;
+  cursor: pointer;
+  box-shadow: 0 0 30px 0 #000;
+}
+
+.amcharts-pie-slice:hover {
+  transform: scale(1.1);
+  filter: url(#shadow);
+}
+
+
+
+/*************************************************/
+/* State colors */
+
+
+/* top-nav state badge */
+.nav-info .badge.passed {
+  color: #00AA00 !important;
+}
+.nav-info .badge.passx {
+  color: #00AABB !important;
+}
+.nav-info .badge.failed {
+  color: #FF0000 !important;
+}
+.nav-info .badge.errored {
+  color: #DF01D7 !important;
+}
+.nav-info .badge.aborted {
+  color: #000000 !important;
+}
+.nav-info .badge.blocked {
+  color: #A10A28 !important;
+}
+.nav-info .badge.skipped {
+  color: #6E6E6E !important;
+}
+
+
+/* header state badge */
+.passed.new.badge,
+.passed.collapsible-header .new.badge {
+    background-color: #00AA0066;
+}
+.passx.new.badge,
+.passx.collapsible-header .new.badge {
+    background-color: #00AABB66;
+}
+.failed.new.badge,
+.failed.collapsible-header .new.badge {
+    background-color: #FF000066;
+}
+.errored.new.badge,
+.errored.collapsible-header .new.badge {
+    background-color: #DF01D766;
+}
+.aborted.new.badge,
+.aborted.collapsible-header .new.badge {
+    background-color: #00000066;
+}
+.blocked.new.badge,
+.blocked.collapsible-header .new.badge {
+    background-color: #A10A2866;
+}
+.skipped.new.badge,
+.skipped.collapsible-header .new.badge {
+    background-color: #6E6E6E66;
+}
+.unknown.new.badge,
+.unknown.collapsible-header .new.badge {
+    background-color: #AAAAAA66;
+}
+.other.new.badge,
+.other.collapsible-header .new.badge {
+    background-color: #80cbc466;
+}
+
+
+
+/*************************************************/
+/* Trade colors */
+
+/*
+.passed { background-color: #00AA00; }
+.passx { background-color: #00AABB; }
+.failed { background-color: #FF0000; }
+.errored { background-color: #DF01D7; }
+.aborted { background-color: #000000; }
+.blocked { background-color: #A10A28; }
+.skipped { background-color: #6E6E6E; }
+.unknown { background-color: #AAAAAA; }
+*/
+
+
+
+/*************************************************/
+/* Media styling */
+
+@media only screen and (max-width: 992px) {
+    header,
+    main,
+    footer {
+        padding-left: 0;
+    }
+
+    header .page-title {
+        padding-left: .3rem;
+    }
+
+    main>div.row {
+        margin: 0 2rem;
+    }
+}
+
+@media only screen and (min-width: 993px) {
+    .container {
+        width: 85%;
+    }
+}
+
+@media only screen and (max-width: 601px) {
+    main>div.row {
+        margin: 0 .5rem;
+    }
+}
+</style>
+
+<body>
+    <header>
+        <div class="navbar-fixed">
+            <nav class="top-nav brown lighten-1">
+                <div class="nav-wrapper">
+                    <a href="#" data-activates="slide-out" class="button-collapse top-nav d-inline-block"><i class="material-icons">menu</i></a>
+                    <a class="ml-2">job</a>
+                    <div class="nav-info">
+                        <div>
+                            <span class="new badge passed" data-badge-caption="">PASSED</span>
+                        </div>
+                        <div>
+                            <span>2023-12-06</span>
+                            <span>0:00:55</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- Collapsible side-nav content -->
+        <ul id="slide-out" class="side-nav">
+            <li class="side-nav-head brown lighten-1 z-depth-1">
+                <span>job</span>
+            </li>
+
+            <!-- Table of Contents -->
+            <li class="no-padding">
+                <ul>
+                    <li><a href="#overview" data-click="true">Overview</a></li>
+                    <li class="no-padding">
+                        <ul class="collapsible ">
+							
+							<li>
+								<a class="collapsible-header"><i class="material-icons">arrow_drop_down</i>Task-1: test_script</a>
+								<div class="collapsible-body">
+									<ul>
+										
+										
+										
+                                        <li><a href="#script-1-test-1" data-click="true"><span class="name">common_setup</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+										
+                                        <li><a href="#script-1-test-2" data-click="true"><span class="name">l2_nxos_1</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+										
+                                        <li><a href="#script-1-test-3" data-click="true"><span class="name">l3_nxos_1</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+										
+                                        <li><a href="#script-1-test-4" data-click="true"><span class="name">l3_nxos_2</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+										
+                                        <li><a href="#script-1-test-5" data-click="true"><span class="name">l2_nxos_2</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+										
+                                        <li><a href="#script-1-test-6" data-click="true"><span class="name">common_cleanup</span><span class="new badge passed" data-badge-caption="">PASSED</span></a></li>
+										
+									</ul>
+								</div>
+							</li>
+							
+                        </ul>
+                    </li>
+                    <li>
+		                <div class="divider m-0"></div>
+		            </li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+    <main>
+        <div class="container">
+            <div class="row">
+            <div class="col s12">
+                <ul class="collapsible lean" data-collapsible="expandable">
+                	<!-- Overview -->
+                    <li>
+                        <div id="overview" class="collapsible-header active">
+                            <i class="material-icons">arrow_drop_down</i>
+                            <h6>Overview</h6>
+                        </div>
+                        <div class="collapsible-body">
+                            <div class="row d-flex">
+                                <div class="col m12 l5 overview">
+                                	<table>
+                                		<tr>
+                                			<td><b>Job Name:</b></td>
+                                            <td>job</td>
+                                		</tr>
+                                		<tr>
+                                			<td><b>Start Time:</b></td>
+                                            <td>2023-12-06T21:48:32.975218-05:00</td>
+                                		</tr>
+                                		<tr>
+                                			<td><b>End Time:</b></td>
+                                            <td>2023-12-06T21:49:28.088846-05:00</td>
+                                		</tr>
+                                		<tr>
+                                			<td><b>Submitter:</b></td>
+                                            <td>umahar</td>
+                                		</tr>
+										<tr>
+                                			<td><b>user:</b></td>
+                                            <td>umahar</td>
+                                		</tr>
+                                		<tr>
+                                			<td><b>Run Time:</b></td>
+                                            <td>0:00:55</td>
+										</tr>
+										
+                                		<tr>
+                                			<td><b>Testbed:</b></td>
+                                            <td>cml_labs_testbed</td>
+										</tr>
+										
+                                		
+                                		
+                                	</table>
+                                </div>
+                                <div class="col m12 l7">
+                                    <div id="chartdiv"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Testscripts -->
+                    
+
+
+<!--Testscript content-->
+<li>
+
+    
+    <div id="script-1" class="collapsible-header passed active">
+    
+        <i class="material-icons">arrow_drop_down</i>
+        <h6>Task-1: test_script</h6> <i class="material-icons">arrow_drop_down</i>
+        
+        <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+        
+        <div class="not-collapse expand">
+            <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+            <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+        </div>
+    </div>
+    <div class="collapsible-body pr-1">
+        
+        <div class="row data-list m-0 descr" style="display: none;">
+            <div class="col s12">
+                <span style="display: inline-block;"><b>Description:</b> <br /></span>
+            </div>
+        </div>
+        
+
+        <!-- Testcases -->
+        <ul class="collapsible lean" data-collapsible="expandable">
+            
+            
+            <li>
+                <div id="script-1-test-1" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">common_setup</span>
+                    
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:24</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">testbed_connect</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:24</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> <br />&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;establishes&emsp14;connection&emsp14;to&emsp14;all&emsp14;your&emsp14;testbed&emsp14;devices.<br />&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 2464px;">6: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %AETEST-6-INFO: %[part=6.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+7: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %AETEST-6-INFO: %[part=6.2/3][pid=84986][pname=Task-1]: |                     Starting subsection testbed_connect                      |
+8: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %AETEST-6-INFO: %[part=6.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+9: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: Testbed provided!!
+10: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: Connecting to network_devices: l2_nxos_1
+11: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: +++ l2_nxos_1 logfile /Users/umahar/.pyats/runinfo/job.2023Dec06_21:48:23.746264/l2_nxos_1-cli-1701917313.log +++
+12: UMAHAR-M-YYT9: 2023-12-06T21:48:33: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: +++ Unicon plugin nxos (unicon.plugins.nxos) +++
+User Access Verification
+
+14: UMAHAR-M-YYT9: 2023-12-06T21:48:36: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: +++ connection to spawn: ssh -l admin 10.104.55.37  -o KexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostkeyAlgorithms=+ssh-rsa, id: 4589936048 +++
+15: UMAHAR-M-YYT9: 2023-12-06T21:48:36: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: connection to l2_nxos_1
+
+(admin@10.104.55.37) Password: 
+
+Cisco NX-OS Software
+Copyright (c) 2002-2022, Cisco Systems, Inc. All rights reserved.
+Nexus 9000v software (&#34;Nexus 9000v Software&#34;) and related documentation,
+files or other reference materials (&#34;Documentation&#34;) are
+the proprietary property and confidential information of Cisco
+Systems, Inc. (&#34;Cisco&#34;) and are protected, without limitation,
+pursuant to United States and International copyright and trademark
+laws in the applicable jurisdiction which provide civil and criminal
+penalties for copying or distribution without Cisco&#39;s authorization.
+
+Any use or disclosure, in whole or in part, of the Nexus 9000v Software
+or Documentation to any third party for any purposes is expressly
+prohibited except as otherwise authorized by Cisco in writing.
+The copyrights to certain works contained herein are owned by other
+third parties and are used and distributed under license. Some parts
+of this software may be covered under the GNU Public License or the
+GNU Lesser General Public License. A copy of each such license is
+available at
+http://www.gnu.org/licenses/gpl.html and
+http://www.gnu.org/licenses/lgpl.html
+***************************************************************************
+*  Nexus 9000v is strictly limited to use for evaluation, demonstration   *
+*  and NX-OS education. Any use or disclosure, in whole or in part of     *
+*  the Nexus 9000v Software or Documentation to any third party for any   *
+*  purposes is expressly prohibited except as otherwise authorized by     *
+*  Cisco in writing.                                                      *
+***************************************************************************
+
+l2_nxos_1# 
+28: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: Learned hostname(s): &#39;l2_nxos_1&#39;.
+29: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: +++ initializing handle +++
+30: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-0_0]: Learned hostname(s): &#39;l2_nxos_1&#39;.
+31: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: Connecting to network_devices: l3_nxos_1
+32: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: +++ l3_nxos_1 logfile /Users/umahar/.pyats/runinfo/job.2023Dec06_21:48:23.746264/l3_nxos_1-cli-1701917319.log +++
+33: UMAHAR-M-YYT9: 2023-12-06T21:48:39: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: +++ Unicon plugin nxos (unicon.plugins.nxos) +++
+User Access Verification
+
+35: UMAHAR-M-YYT9: 2023-12-06T21:48:42: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: +++ connection to spawn: ssh -l admin 10.104.55.38  -o KexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostkeyAlgorithms=+ssh-rsa, id: 4590093072 +++
+36: UMAHAR-M-YYT9: 2023-12-06T21:48:42: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: connection to l3_nxos_1
+
+(admin@10.104.55.38) Password: 
+
+Cisco NX-OS Software
+Copyright (c) 2002-2022, Cisco Systems, Inc. All rights reserved.
+Nexus 9000v software (&#34;Nexus 9000v Software&#34;) and related documentation,
+files or other reference materials (&#34;Documentation&#34;) are
+the proprietary property and confidential information of Cisco
+Systems, Inc. (&#34;Cisco&#34;) and are protected, without limitation,
+pursuant to United States and International copyright and trademark
+laws in the applicable jurisdiction which provide civil and criminal
+penalties for copying or distribution without Cisco&#39;s authorization.
+
+Any use or disclosure, in whole or in part, of the Nexus 9000v Software
+or Documentation to any third party for any purposes is expressly
+prohibited except as otherwise authorized by Cisco in writing.
+The copyrights to certain works contained herein are owned by other
+third parties and are used and distributed under license. Some parts
+of this software may be covered under the GNU Public License or the
+GNU Lesser General Public License. A copy of each such license is
+available at
+http://www.gnu.org/licenses/gpl.html and
+http://www.gnu.org/licenses/lgpl.html
+***************************************************************************
+*  Nexus 9000v is strictly limited to use for evaluation, demonstration   *
+*  and NX-OS education. Any use or disclosure, in whole or in part of     *
+*  the Nexus 9000v Software or Documentation to any third party for any   *
+*  purposes is expressly prohibited except as otherwise authorized by     *
+*  Cisco in writing.                                                      *
+***************************************************************************
+
+l3_nxos_1# 
+44: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: Learned hostname(s): &#39;l3_nxos_1&#39;.
+45: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: +++ initializing handle +++
+46: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=6178926592][tname=ThreadPoolExecutor-1_0]: Learned hostname(s): &#39;l3_nxos_1&#39;.
+47: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: Connecting to network_devices: l3_nxos_2
+48: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: +++ l3_nxos_2 logfile /Users/umahar/.pyats/runinfo/job.2023Dec06_21:48:23.746264/l3_nxos_2-cli-1701917325.log +++
+49: UMAHAR-M-YYT9: 2023-12-06T21:48:45: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: +++ Unicon plugin nxos (unicon.plugins.nxos) +++
+User Access Verification
+
+51: UMAHAR-M-YYT9: 2023-12-06T21:48:48: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: +++ connection to spawn: ssh -l admin 10.104.55.39  -o KexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostkeyAlgorithms=+ssh-rsa, id: 4590101472 +++
+52: UMAHAR-M-YYT9: 2023-12-06T21:48:48: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: connection to l3_nxos_2
+
+(admin@10.104.55.39) Password: 
+
+Cisco NX-OS Software
+Copyright (c) 2002-2022, Cisco Systems, Inc. All rights reserved.
+Nexus 9000v software (&#34;Nexus 9000v Software&#34;) and related documentation,
+files or other reference materials (&#34;Documentation&#34;) are
+the proprietary property and confidential information of Cisco
+Systems, Inc. (&#34;Cisco&#34;) and are protected, without limitation,
+pursuant to United States and International copyright and trademark
+laws in the applicable jurisdiction which provide civil and criminal
+penalties for copying or distribution without Cisco&#39;s authorization.
+
+Any use or disclosure, in whole or in part, of the Nexus 9000v Software
+or Documentation to any third party for any purposes is expressly
+prohibited except as otherwise authorized by Cisco in writing.
+The copyrights to certain works contained herein are owned by other
+third parties and are used and distributed under license. Some parts
+of this software may be covered under the GNU Public License or the
+GNU Lesser General Public License. A copy of each such license is
+available at
+http://www.gnu.org/licenses/gpl.html and
+http://www.gnu.org/licenses/lgpl.html
+***************************************************************************
+*  Nexus 9000v is strictly limited to use for evaluation, demonstration   *
+*  and NX-OS education. Any use or disclosure, in whole or in part of     *
+*  the Nexus 9000v Software or Documentation to any third party for any   *
+*  purposes is expressly prohibited except as otherwise authorized by     *
+*  Cisco in writing.                                                      *
+***************************************************************************
+
+l3_nxos_2# 
+59: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: Learned hostname(s): &#39;l3_nxos_2&#39;.
+60: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: +++ initializing handle +++
+61: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-2_0]: Learned hostname(s): &#39;l3_nxos_2&#39;.
+62: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: Connecting to network_devices: l2_nxos_2
+63: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: +++ l2_nxos_2 logfile /Users/umahar/.pyats/runinfo/job.2023Dec06_21:48:23.746264/l2_nxos_2-cli-1701917330.log +++
+64: UMAHAR-M-YYT9: 2023-12-06T21:48:50: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: +++ Unicon plugin iosxe (unicon.plugins.iosxe) +++
+User Access Verification
+
+66: UMAHAR-M-YYT9: 2023-12-06T21:48:54: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: +++ connection to spawn: ssh -l admin 10.104.55.40  -o KexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 -o HostkeyAlgorithms=+ssh-rsa, id: 4590313552 +++
+67: UMAHAR-M-YYT9: 2023-12-06T21:48:54: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: connection to l2_nxos_2
+
+(admin@10.104.55.40) Password: 
+
+Cisco NX-OS Software
+Copyright (c) 2002-2022, Cisco Systems, Inc. All rights reserved.
+Nexus 9000v software (&#34;Nexus 9000v Software&#34;) and related documentation,
+files or other reference materials (&#34;Documentation&#34;) are
+the proprietary property and confidential information of Cisco
+Systems, Inc. (&#34;Cisco&#34;) and are protected, without limitation,
+pursuant to United States and International copyright and trademark
+laws in the applicable jurisdiction which provide civil and criminal
+penalties for copying or distribution without Cisco&#39;s authorization.
+
+Any use or disclosure, in whole or in part, of the Nexus 9000v Software
+or Documentation to any third party for any purposes is expressly
+prohibited except as otherwise authorized by Cisco in writing.
+The copyrights to certain works contained herein are owned by other
+third parties and are used and distributed under license. Some parts
+of this software may be covered under the GNU Public License or the
+GNU Lesser General Public License. A copy of each such license is
+available at
+http://www.gnu.org/licenses/gpl.html and
+http://www.gnu.org/licenses/lgpl.html
+***************************************************************************
+*  Nexus 9000v is strictly limited to use for evaluation, demonstration   *
+*  and NX-OS education. Any use or disclosure, in whole or in part of     *
+*  the Nexus 9000v Software or Documentation to any third party for any   *
+*  purposes is expressly prohibited except as otherwise authorized by     *
+*  Cisco in writing.                                                      *
+***************************************************************************
+
+l2_nxos_2# 
+75: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: Learned hostname(s): &#39;l2_nxos_2&#39;.
+76: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: +++ initializing handle +++
+77: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %UNICON-6-INFO: %[pid=84986][pname=Task-1][tid=11291095040][tname=ThreadPoolExecutor-3_0]: Learned hostname(s): &#39;l2_nxos_2&#39;.
+78: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: Passed reason: ---------------SSH to Below Devices Failed------------- 
+79: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of subsection testbed_connect is =&gt; PASSED
+80: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=80.1/3][pid=84986][pname=Task-1]: +----------------------</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">setup</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">80: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=80.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+81: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=80.2/3][pid=84986][pname=Task-1]: |                          Starting subsection setup                           |
+82: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=80.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+83: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of subsection setup is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <li>
+                <div id="script-1-test-2" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">l2_nxos_1</span>
+                    
+                    
+                    <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:07</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    <div class="row data-list mb-0 descr" style="display: none;">
+                        <div class="col s12">
+                            <span style="display: inline-block;"><b>Description:</b> <br />&emsp14;&emsp14;&emsp14;&emsp14;verify&emsp14;whether&emsp14;all&emsp14;cts&emsp14;pac&emsp14;and&emsp14;all&emsp14;cts&emsp14;environment&emsp14;data&emsp14;has&emsp14;been&emsp14;downloaded&emsp14;to&emsp14;the&emsp14;fabric&emsp14;nodes&emsp14;after&emsp14;provisioning<br />&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">setup</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">88: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=88.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+89: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=88.2/3][pid=84986][pname=Task-1]: |                            Starting section setup                            |
+90: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=88.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+91: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section setup is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show ip route</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 420px;">92: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=92.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+93: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=92.2/3][pid=84986][pname=Task-1]: |                        Starting section show ip route                        |
+94: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %AETEST-6-INFO: %[part=92.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+95: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_1
+96: UMAHAR-M-YYT9: 2023-12-06T21:48:57: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_1 with via &#39;cli&#39;: executing command &#39;show ip route&#39; +++
+show ip route
+
+IP Route Table for VRF &#34;default&#34;
+&#39;*&#39; denotes best ucast next-hop
+&#39;**&#39; denotes best mcast next-hop
+&#39;[x/y]&#39; denotes [preference/metric]
+&#39;%&lt;string&gt;&#39; in via output denotes VRF &lt;string&gt;
+
+0.0.0.0/0, ubest/mbest: 2/0
+    *via 10.10.55.1, [1/0], 11:45:26, static
+    *via 30.30.30.254, [1/0], 09:43:51, static
+10.10.55.0/24, ubest/mbest: 1/0, attached
+    *via 10.10.55.38, Vlan1, [0/0], 11:45:26, direct
+10.10.55.38/32, ubest/mbest: 1/0, attached
+    *via 10.10.55.38, Vlan1, [0/0], 11:45:26, local
+30.30.30.0/24, ubest/mbest: 1/0, attached
+    *via 30.30.30.4, Vlan400, [0/0], 09:55:37, direct
+30.30.30.4/32, ubest/mbest: 1/0, attached
+    *via 30.30.30.4, Vlan400, [0/0], 09:55:37, local
+
+
+l2_nxos_1# 
+99: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show ip route is =&gt; PASSED
+100: UMAHAR-M-YYT9:</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show run</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:04</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 3066px;">100: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %AETEST-6-INFO: %[part=100.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+101: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %AETEST-6-INFO: %[part=100.2/3][pid=84986][pname=Task-1]: |                          Starting section show run                           |
+102: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %AETEST-6-INFO: %[part=100.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+103: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_1
+104: UMAHAR-M-YYT9: 2023-12-06T21:48:58: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_1 with via &#39;cli&#39;: executing command &#39;show run&#39; +++
+show run
+
+
+!Command: show running-config
+!Running configuration last done at: Wed Dec  6 09:33:05 2023
+!Time: Wed Dec  6 18:04:25 2023
+
+version 10.3(1) Bios:version  
+hostname l2_nxos_1
+vdc l2_nxos_1 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature interface-vlan
+
+no password strength-check
+username admin password 5 $5$MCLBNB$5W.eDSlsskpzAyWbM1qowN8IsNRAm.13dfrM0MoPBp0 
+ role network-admin
+username admin role priv-15
+username cisco password 5 $5$FPHGDF$oC2OVKdpKFoV4k0mRtW4SiWcqMeU2bb6Q8ySlnm00l/ 
+ role network-admin
+username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+[7m--More--[27m
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 21553573CC4483AC94EB30519A6FBFEE74
+C5 priv aes-128 37621A548E4EE8D6ECA90B51963EEDF46990 localizedV2key
+snmp-server user admin priv-15
+snmp-server user cisco network-admin auth md5 016360FCC896E095CE0293ED82F50CC722
+F2 priv aes-128 007572F6B9C7E290FB69869B86F80BC06CFA localizedV2key
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+ip route 0.0.0.0/0 10.10.55.1
+ip route 0.0.0.0/0 30.30.30.254
+vlan 1,100,200,300,400
+
+vrf context management
+
+interface Vlan1
+  no shutdown
+  ip address 10.10.55.38/24
+
+[7m--More--[27m
+interface Vlan400
+  no shutdown
+  ip address 30.30.30.4/24
+
+interface Ethernet1/1
+  switchport mode trunk
+
+interface Ethernet1/2
+  switchport access vlan 200
+
+interface Ethernet1/3
+  switchport mode trunk
+
+interface Ethernet1/4
+  switchport access vlan 200
+
+interface Ethernet1/5
+
+interface Ethernet1/6
+
+interface Ethernet1/7
+
+interface Ethernet1/8
+[7m--More--[27m
+
+[K
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+interface Ethernet1/19
+
+[7m--More--[27m
+interface Ethernet1/20
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+
+interface Ethernet1/31
+[7m--More--[27m
+
+[K
+interface Ethernet1/32
+
+interface Ethernet1/33
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+interface Ethernet1/42
+
+[7m--More--[27m
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+
+interface Ethernet1/48
+
+interface Ethernet1/49
+
+interface Ethernet1/50
+
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+
+interface Ethernet1/54
+[7m--More--[27m
+
+[K
+interface Ethernet1/55
+
+interface Ethernet1/56
+
+interface Ethernet1/57
+
+interface Ethernet1/58
+
+interface Ethernet1/59
+
+interface Ethernet1/60
+
+interface Ethernet1/61
+
+interface Ethernet1/62
+
+interface Ethernet1/63
+
+interface Ethernet1/64
+
+interface mgmt0
+  vrf member management
+[7m--More--[27m
+icam monitor scale
+
+line console
+  exec-timeout 0
+line vty
+  exec-timeout 0
+boot nxos bootflash:/nxos64-cs.10.3.1.F.bin 
+
+no logging console
+
+
+
+l2_nxos_1# 
+116: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show run is =&gt; PASSED
+117: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %AETEST-6-INFO: %[part=117.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+118: UMAHAR-M-YY</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show int status</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:02</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 1316px;">117: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %AETEST-6-INFO: %[part=117.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+118: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %AETEST-6-INFO: %[part=117.2/3][pid=84986][pname=Task-1]: |                       Starting section show int status                       |
+119: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %AETEST-6-INFO: %[part=117.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+120: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_1
+121: UMAHAR-M-YYT9: 2023-12-06T21:49:03: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_1 with via &#39;cli&#39;: executing command &#39;show int status&#39; +++
+show int status
+
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+mgmt0         --                 connected routed    full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Eth1/1        --                 connected trunk     full    1000    10g        
+Eth1/2        --                 connected 200       full    1000    10g        
+Eth1/3        --                 connected trunk     full    1000    10g        
+Eth1/4        --                 connected 200       full    1000    10g        
+Eth1/5        --                 connected 1         full    1000    10g        
+Eth1/6        --                 connected 1         full    1000    10g        
+Eth1/7        --                 connected 1         full    1000    10g        
+Eth1/8        --                 connected 1         full    1000    10g        
+Eth1/9        --                 connected 1         full    1000    10g        
+Eth1/10       --                 connected 1         full    1000    10g        
+Eth1/11       --                 connected 1         full    1000    10g        
+Eth1/12       --                 notconnec 1         auto    auto    10g        
+Eth1/13       --                 notconnec 1         auto    auto    10g        
+Eth1/14       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/15       --                 notconnec 1         auto    auto    10g        
+Eth1/16       --                 notconnec 1         auto    auto    10g        
+Eth1/17       --                 notconnec 1         auto    auto    10g        
+Eth1/18       --                 notconnec 1         auto    auto    10g        
+Eth1/19       --                 notconnec 1         auto    auto    10g        
+Eth1/20       --                 notconnec 1         auto    auto    10g        
+Eth1/21       --                 notconnec 1         auto    auto    10g        
+Eth1/22       --                 notconnec 1         auto    auto    10g        
+Eth1/23       --                 notconnec 1         auto    auto    10g        
+Eth1/24       --                 notconnec 1         auto    auto    10g        
+Eth1/25       --                 notconnec 1         auto    auto    10g        
+Eth1/26       --                 notconnec 1         auto    auto    10g        
+Eth1/27       --                 notconnec 1         auto    auto    10g        
+Eth1/28       --                 notconnec 1         auto    auto    10g        
+Eth1/29       --                 notconnec 1         auto    auto    10g        
+Eth1/30       --                 notconnec 1         auto    auto    10g        
+Eth1/31       --                 notconnec 1         auto    auto    10g        
+Eth1/32       --                 notconnec 1         auto    auto    10g        
+Eth1/33       --                 notconnec 1         auto    auto    10g        
+Eth1/34       --                 notconnec 1         auto    auto    10g        
+Eth1/35       --                 notconnec 1         auto    auto    10g        
+Eth1/36       --                 notconnec 1         auto    auto    10g        
+Eth1/37       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/38       --                 notconnec 1         auto    auto    10g        
+Eth1/39       --                 notconnec 1         auto    auto    10g        
+Eth1/40       --                 notconnec 1         auto    auto    10g        
+Eth1/41       --                 notconnec 1         auto    auto    10g        
+Eth1/42       --                 notconnec 1         auto    auto    10g        
+Eth1/43       --                 notconnec 1         auto    auto    10g        
+Eth1/44       --                 notconnec 1         auto    auto    10g        
+Eth1/45       --                 notconnec 1         auto    auto    10g        
+Eth1/46       --                 notconnec 1         auto    auto    10g        
+Eth1/47       --                 notconnec 1         auto    auto    10g        
+Eth1/48       --                 notconnec 1         auto    auto    10g        
+Eth1/49       --                 notconnec 1         auto    auto    10g        
+Eth1/50       --                 notconnec 1         auto    auto    10g        
+Eth1/51       --                 notconnec 1         auto    auto    10g        
+Eth1/52       --                 notconnec 1         auto    auto    10g        
+Eth1/53       --                 notconnec 1         auto    auto    10g        
+Eth1/54       --                 notconnec 1         auto    auto    10g        
+Eth1/55       --                 notconnec 1         auto    auto    10g        
+Eth1/56       --                 notconnec 1         auto    auto    10g        
+Eth1/57       --                 notconnec 1         auto    auto    10g        
+Eth1/58       --                 notconnec 1         auto    auto    10g        
+Eth1/59       --                 notconnec 1         auto    auto    10g        
+Eth1/60       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/61       --                 notconnec 1         auto    auto    10g        
+Eth1/62       --                 notconnec 1         auto    auto    10g        
+Eth1/63       --                 notconnec 1         auto    auto    10g        
+Eth1/64       --                 notconnec 1         auto    auto    10g        
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Vlan1         --                 connected routed    auto    auto    --
+Vlan400       --                 connected routed    auto    auto    --
+
+l2_nxos_1# 
+136: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show int status is =&gt; PASSED
+137: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[pid=84986][pname=Task</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <li>
+                <div id="script-1-test-3" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">l3_nxos_1</span>
+                    
+                    
+                    <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:07</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    <div class="row data-list mb-0 descr" style="display: none;">
+                        <div class="col s12">
+                            <span style="display: inline-block;"><b>Description:</b> <br />&emsp14;&emsp14;&emsp14;&emsp14;verify&emsp14;whether&emsp14;all&emsp14;cts&emsp14;pac&emsp14;and&emsp14;all&emsp14;cts&emsp14;environment&emsp14;data&emsp14;has&emsp14;been&emsp14;downloaded&emsp14;to&emsp14;the&emsp14;fabric&emsp14;nodes&emsp14;after&emsp14;provisioning<br />&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">setup</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">141: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=141.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+142: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=141.2/3][pid=84986][pname=Task-1]: |                            Starting section setup                            |
+143: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=141.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+144: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section setup is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show ip route</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:01</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 882px;">145: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=145.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+146: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=145.2/3][pid=84986][pname=Task-1]: |                        Starting section show ip route                        |
+147: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %AETEST-6-INFO: %[part=145.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+148: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_1
+149: UMAHAR-M-YYT9: 2023-12-06T21:49:05: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_1 with via &#39;cli&#39;: executing command &#39;show ip route&#39; +++
+show ip route
+
+IP Route Table for VRF &#34;default&#34;
+&#39;*&#39; denotes best ucast next-hop
+&#39;**&#39; denotes best mcast next-hop
+&#39;[x/y]&#39; denotes [preference/metric]
+&#39;%&lt;string&gt;&#39; in via output denotes VRF &lt;string&gt;
+
+0.0.0.0/0, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/1], 07:55:17, ospf-1, type-2, tag 1
+8.8.8.8/32, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/22], 10:20:45, ospf-1, intra
+10.20.10.0/31, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/22], 10:20:45, ospf-1, intra
+10.20.10.2/31, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/21], 10:20:45, ospf-1, intra
+10.20.10.4/31, ubest/mbest: 1/0, attached
+    *via 10.20.10.5, Vlan300, [0/0], 11:30:52, direct
+10.20.10.5/32, ubest/mbest: 1/0, attached
+    *via 10.20.10.5, Vlan300, [0/0], 11:30:52, local
+10.20.10.6/31, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/22], 10:20:45, ospf-1, intra
+10.20.10.8/31, ubest/mbest: 1/0, attached
+    *via 10.20.10.9, Po11, [0/0], 10:21:38, direct
+10.20.10.9/32, ubest/mbest: 1/0, attached
+[7m--More--[27m
+    *via 10.20.10.9, Po11, [0/0], 10:21:38, local
+10.100.10.0/24, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/21], 10:20:45, ospf-1, intra
+10.101.10.0/24, ubest/mbest: 1/0, attached
+    *via 10.101.10.253, Vlan101, [0/0], 11:26:24, direct
+10.101.10.1/32, ubest/mbest: 1/0, attached
+    *via 10.101.10.1, Vlan101, [0/0], 11:01:26, hsrp
+10.101.10.253/32, ubest/mbest: 1/0, attached
+    *via 10.101.10.253, Vlan101, [0/0], 11:26:24, local
+10.200.10.0/24, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/21], 10:20:45, ospf-1, intra
+10.201.10.0/24, ubest/mbest: 1/0, attached
+    *via 10.201.10.253, Vlan201, [0/0], 11:26:25, direct
+10.201.10.1/32, ubest/mbest: 1/0, attached
+    *via 10.201.10.1, Vlan201, [0/0], 10:59:12, hsrp
+10.201.10.253/32, ubest/mbest: 1/0, attached
+    *via 10.201.10.253, Vlan201, [0/0], 11:26:25, local
+30.30.30.0/24, ubest/mbest: 1/0
+    *via 10.20.10.8, Po11, [110/21], 09:50:44, ospf-1, intra
+30.40.30.0/24, ubest/mbest: 1/0, attached
+    *via 30.40.30.5, Vlan400, [0/0], 09:27:26, direct
+30.40.30.5/32, ubest/mbest: 1/0, attached
+    *via 30.40.30.5, Vlan400, [0/0], 09:27:26, local
+[7m--More--[27m
+30.40.30.254/32, ubest/mbest: 1/0, attached
+    *via 30.40.30.254, Vlan400, [0/0], 09:26:43, hsrp
+
+
+l3_nxos_1# 
+155: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show ip route is =&gt; PASSED
+156: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %AETEST-6</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show run</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:04</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 3808px;">156: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %AETEST-6-INFO: %[part=156.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+157: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %AETEST-6-INFO: %[part=156.2/3][pid=84986][pname=Task-1]: |                          Starting section show run                           |
+158: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %AETEST-6-INFO: %[part=156.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+159: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_1
+160: UMAHAR-M-YYT9: 2023-12-06T21:49:06: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_1 with via &#39;cli&#39;: executing command &#39;show run&#39; +++
+show run
+
+
+!Command: show running-config
+!Running configuration last done at: Wed Dec  6 12:29:59 2023
+!Time: Wed Dec  6 18:04:32 2023
+
+version 10.3(1) Bios:version  
+hostname l3_nxos_1
+vdc l3_nxos_1 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature ospf
+feature interface-vlan
+feature hsrp
+feature lacp
+feature dhcp
+
+no password strength-check
+username admin password 5 $5$AJBELG$cLFg92yW6HhS.UaPTOIfju/4qckorhxCwIPTgy5luDA 
+ role network-admin
+[7m--More--[27m
+username admin role priv-15
+username cisco password 5 $5$BGPLOP$4mJ5UgvjC1vkFFJ/hTFlDLZ2YOrITT8S./9Nb.4G3F/ 
+ role network-admin
+username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 367F184D04BE3E4C0AB763E06225BCD857
+EA priv aes-128 3753544166CC42642B8344F73E68B1A742AE localizedV2key
+snmp-server user admin priv-15
+snmp-server user cisco network-admin auth md5 175C399F37923F8EF2ACBC0B790A555E17
+25 priv aes-128 52136CA305FC42EA85D4D84E7E0D192A1279 localizedV2key
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+vlan 1,101,201,300,400
+
+service dhcp
+ip dhcp relay
+ipv6 dhcp relay
+vrf context management
+[7m--More--[27m
+
+[K
+
+interface Vlan1
+
+interface Vlan101
+  description corp_data
+  no shutdown
+  ip address 10.101.10.253/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp 101 
+    priority 120
+    ip 10.101.10.1
+  ip dhcp relay address 8.8.8.8 
+
+interface Vlan201
+  description corp_voice
+  no shutdown
+  ip address 10.201.10.253/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp 201 
+    priority 120
+    ip 10.201.10.1
+  ip dhcp relay address 8.8.8.8 
+[7m--More--[27m
+
+[K
+interface Vlan300
+  description wan
+  no shutdown
+  ip address 10.20.10.5/31
+  ip router ospf 1 area 0.0.0.0
+
+interface Vlan400
+  description management_vlan
+  no shutdown
+  ip address 30.40.30.5/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp version 2
+  hsrp 400 
+    ip 30.40.30.254
+
+interface port-channel11
+  description campus_datacenter
+  no switchport
+  ip address 10.20.10.9/31
+  ip router ospf 1 area 0.0.0.0
+
+interface Ethernet1/1
+[7m--More--[27m
+  switchport mode trunk
+
+interface Ethernet1/2
+  switchport mode trunk
+  switchport trunk allowed vlan 300
+
+interface Ethernet1/3
+  switchport mode trunk
+
+interface Ethernet1/4
+  no switchport
+  channel-group 11 mode active
+  no shutdown
+
+interface Ethernet1/5
+  no switchport
+  channel-group 11 mode active
+  no shutdown
+
+interface Ethernet1/6
+
+interface Ethernet1/7
+  switchport mode trunk
+[7m--More--[27m
+
+[K
+interface Ethernet1/8
+
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+[7m--More--[27m
+interface Ethernet1/19
+
+interface Ethernet1/20
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+[7m--More--[27m
+
+[K
+interface Ethernet1/31
+
+interface Ethernet1/32
+
+interface Ethernet1/33
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+[7m--More--[27m
+interface Ethernet1/42
+
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+
+interface Ethernet1/48
+
+interface Ethernet1/49
+
+interface Ethernet1/50
+
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+[7m--More--[27m
+
+[K
+interface Ethernet1/54
+
+interface Ethernet1/55
+
+interface Ethernet1/56
+
+interface Ethernet1/57
+
+interface Ethernet1/58
+
+interface Ethernet1/59
+
+interface Ethernet1/60
+
+interface Ethernet1/61
+
+interface Ethernet1/62
+
+interface Ethernet1/63
+
+interface Ethernet1/64
+
+[7m--More--[27m
+interface mgmt0
+  vrf member management
+icam monitor scale
+
+line console
+  exec-timeout 0
+line vty
+  exec-timeout 0
+boot nxos bootflash:/nxos64-cs.10.3.1.F.bin 
+router ospf 1
+
+no logging console
+
+
+
+l3_nxos_1# 
+176: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show run is =&gt; PASSED
+177: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[part=177.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+178: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[part=1</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show int status</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:02</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 1428px;">177: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[part=177.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+178: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[part=177.2/3][pid=84986][pname=Task-1]: |                       Starting section show int status                       |
+179: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %AETEST-6-INFO: %[part=177.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+180: UMAHAR-M-YYT9: 2023-12-06T21:49:10: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_1
+181: UMAHAR-M-YYT9: 2023-12-06T21:49:11: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_1 with via &#39;cli&#39;: executing command &#39;show int status&#39; +++
+show int status
+
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+mgmt0         --                 connected routed    full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Eth1/1        --                 connected trunk     full    1000    10g        
+Eth1/2        --                 connected trunk     full    1000    10g        
+Eth1/3        --                 connected trunk     full    1000    10g        
+Eth1/4        --                 connected routed    full    1000    10g        
+Eth1/5        --                 connected routed    full    1000    10g        
+Eth1/6        --                 connected 1         full    1000    10g        
+Eth1/7        --                 connected trunk     full    1000    10g        
+Eth1/8        --                 connected 1         full    1000    10g        
+Eth1/9        --                 connected 1         full    1000    10g        
+Eth1/10       --                 notconnec 1         auto    auto    10g        
+Eth1/11       --                 notconnec 1         auto    auto    10g        
+Eth1/12       --                 notconnec 1         auto    auto    10g        
+Eth1/13       --                 notconnec 1         auto    auto    10g        
+Eth1/14       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/15       --                 notconnec 1         auto    auto    10g        
+Eth1/16       --                 notconnec 1         auto    auto    10g        
+Eth1/17       --                 notconnec 1         auto    auto    10g        
+Eth1/18       --                 notconnec 1         auto    auto    10g        
+Eth1/19       --                 notconnec 1         auto    auto    10g        
+Eth1/20       --                 notconnec 1         auto    auto    10g        
+Eth1/21       --                 notconnec 1         auto    auto    10g        
+Eth1/22       --                 notconnec 1         auto    auto    10g        
+Eth1/23       --                 notconnec 1         auto    auto    10g        
+Eth1/24       --                 notconnec 1         auto    auto    10g        
+Eth1/25       --                 notconnec 1         auto    auto    10g        
+Eth1/26       --                 notconnec 1         auto    auto    10g        
+Eth1/27       --                 notconnec 1         auto    auto    10g        
+Eth1/28       --                 notconnec 1         auto    auto    10g        
+Eth1/29       --                 notconnec 1         auto    auto    10g        
+Eth1/30       --                 notconnec 1         auto    auto    10g        
+Eth1/31       --                 notconnec 1         auto    auto    10g        
+Eth1/32       --                 notconnec 1         auto    auto    10g        
+Eth1/33       --                 notconnec 1         auto    auto    10g        
+Eth1/34       --                 notconnec 1         auto    auto    10g        
+Eth1/35       --                 notconnec 1         auto    auto    10g        
+Eth1/36       --                 notconnec 1         auto    auto    10g        
+Eth1/37       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/38       --                 notconnec 1         auto    auto    10g        
+Eth1/39       --                 notconnec 1         auto    auto    10g        
+Eth1/40       --                 notconnec 1         auto    auto    10g        
+Eth1/41       --                 notconnec 1         auto    auto    10g        
+Eth1/42       --                 notconnec 1         auto    auto    10g        
+Eth1/43       --                 notconnec 1         auto    auto    10g        
+Eth1/44       --                 notconnec 1         auto    auto    10g        
+Eth1/45       --                 notconnec 1         auto    auto    10g        
+Eth1/46       --                 notconnec 1         auto    auto    10g        
+Eth1/47       --                 notconnec 1         auto    auto    10g        
+Eth1/48       --                 notconnec 1         auto    auto    10g        
+Eth1/49       --                 notconnec 1         auto    auto    10g        
+Eth1/50       --                 notconnec 1         auto    auto    10g        
+Eth1/51       --                 notconnec 1         auto    auto    10g        
+Eth1/52       --                 notconnec 1         auto    auto    10g        
+Eth1/53       --                 notconnec 1         auto    auto    10g        
+Eth1/54       --                 notconnec 1         auto    auto    10g        
+Eth1/55       --                 notconnec 1         auto    auto    10g        
+Eth1/56       --                 notconnec 1         auto    auto    10g        
+Eth1/57       --                 notconnec 1         auto    auto    10g        
+Eth1/58       --                 notconnec 1         auto    auto    10g        
+Eth1/59       --                 notconnec 1         auto    auto    10g        
+Eth1/60       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/61       --                 notconnec 1         auto    auto    10g        
+Eth1/62       --                 notconnec 1         auto    auto    10g        
+Eth1/63       --                 notconnec 1         auto    auto    10g        
+Eth1/64       --                 notconnec 1         auto    auto    10g        
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Po11          campus_datacenter  connected routed    full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Vlan1         --                 down      routed    auto    auto    --
+Vlan101       corp_data          connected routed    auto    auto    --
+Vlan201       corp_voice         connected routed    auto    auto    --
+Vlan300       wan                connected routed    auto    auto    --
+Vlan400       management_vlan    connected routed    auto    auto    --
+
+l3_nxos_1# 
+201: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show int status is =&gt; PASSED
+202: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <li>
+                <div id="script-1-test-4" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">l3_nxos_2</span>
+                    
+                    
+                    <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:08</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    <div class="row data-list mb-0 descr" style="display: none;">
+                        <div class="col s12">
+                            <span style="display: inline-block;"><b>Description:</b> <br />&emsp14;&emsp14;&emsp14;&emsp14;verify&emsp14;whether&emsp14;all&emsp14;cts&emsp14;pac&emsp14;and&emsp14;all&emsp14;cts&emsp14;environment&emsp14;data&emsp14;has&emsp14;been&emsp14;downloaded&emsp14;to&emsp14;the&emsp14;fabric&emsp14;nodes&emsp14;after&emsp14;provisioning<br />&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">setup</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">206: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=206.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+207: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=206.2/3][pid=84986][pname=Task-1]: |                            Starting section setup                            |
+208: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=206.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+209: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section setup is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show ip route</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:01</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 868px;">210: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=210.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+211: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=210.2/3][pid=84986][pname=Task-1]: |                        Starting section show ip route                        |
+212: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %AETEST-6-INFO: %[part=210.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+213: UMAHAR-M-YYT9: 2023-12-06T21:49:12: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_2
+214: UMAHAR-M-YYT9: 2023-12-06T21:49:13: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_2 with via &#39;cli&#39;: executing command &#39;show ip route&#39; +++
+show ip route
+
+IP Route Table for VRF &#34;default&#34;
+&#39;*&#39; denotes best ucast next-hop
+&#39;**&#39; denotes best mcast next-hop
+&#39;[x/y]&#39; denotes [preference/metric]
+&#39;%&lt;string&gt;&#39; in via output denotes VRF &lt;string&gt;
+
+0.0.0.0/0, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/1], 07:55:25, ospf-1, type-2, tag 1
+8.8.8.8/32, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/41], 11:18:02, ospf-1, intra
+10.20.10.0/31, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/41], 10:27:48, ospf-1, intra
+10.20.10.2/31, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/41], 10:27:44, ospf-1, intra
+10.20.10.4/31, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/41], 11:27:31, ospf-1, intra
+10.20.10.6/31, ubest/mbest: 1/0, attached
+    *via 10.20.10.7, Vlan300, [0/0], 11:28:03, direct
+10.20.10.7/32, ubest/mbest: 1/0, attached
+    *via 10.20.10.7, Vlan300, [0/0], 11:28:03, local
+10.20.10.8/31, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/42], 10:21:39, ospf-1, intra
+10.100.10.0/24, ubest/mbest: 1/0
+[7m--More--[27m
+    *via 10.20.10.6, Vlan300, [110/42], 10:27:44, ospf-1, intra
+10.101.10.0/24, ubest/mbest: 1/0, attached
+    *via 10.101.10.254, Vlan101, [0/0], 11:01:49, direct
+10.101.10.1/32, ubest/mbest: 1/0, attached
+    *via 10.101.10.1, Vlan101, [0/0], 10:57:57, hsrp
+10.101.10.254/32, ubest/mbest: 1/0, attached
+    *via 10.101.10.254, Vlan101, [0/0], 11:01:49, local
+10.200.10.0/24, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/42], 10:27:44, ospf-1, intra
+10.201.10.0/24, ubest/mbest: 1/0, attached
+    *via 10.201.10.254, Vlan201, [0/0], 11:01:49, direct
+10.201.10.1/32, ubest/mbest: 1/0, attached
+    *via 10.201.10.1, Vlan201, [0/0], 10:59:49, hsrp
+10.201.10.254/32, ubest/mbest: 1/0, attached
+    *via 10.201.10.254, Vlan201, [0/0], 11:01:49, local
+30.30.30.0/24, ubest/mbest: 1/0
+    *via 10.20.10.6, Vlan300, [110/42], 09:26:44, ospf-1, intra
+30.40.30.0/24, ubest/mbest: 1/0, attached
+    *via 30.40.30.6, Vlan400, [0/0], 09:26:44, direct
+30.40.30.6/32, ubest/mbest: 1/0, attached
+    *via 30.40.30.6, Vlan400, [0/0], 09:26:44, local
+30.40.30.254/32, ubest/mbest: 1/0, attached
+    *via 30.40.30.254, Vlan400, [0/0], 09:26:06, hsrp
+[7m--More--[27m
+
+[K
+
+l3_nxos_2# 
+227: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show ip route is =&gt; PASSED
+228: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %AETEST</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show run</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:04</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 3626px;">228: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %AETEST-6-INFO: %[part=228.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+229: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %AETEST-6-INFO: %[part=228.2/3][pid=84986][pname=Task-1]: |                          Starting section show run                           |
+230: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %AETEST-6-INFO: %[part=228.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+231: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_2
+232: UMAHAR-M-YYT9: 2023-12-06T21:49:14: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_2 with via &#39;cli&#39;: executing command &#39;show run&#39; +++
+show run
+
+
+!Command: show running-config
+!Running configuration last done at: Wed Dec  6 12:29:36 2023
+!Time: Wed Dec  6 18:04:42 2023
+
+version 10.3(1) Bios:version  
+hostname l3_nxos_2
+vdc l3_nxos_2 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature ospf
+feature interface-vlan
+feature hsrp
+feature dhcp
+
+no password strength-check
+username admin password 5 $5$AANMCB$8jo8GXEZ9Rm5BH5.I8SHzxR6JnITgINc0hwA.LOTBJ8 
+ role network-admin
+username admin role priv-15
+[7m--More--[27m
+username cisco password 5 $5$HAOJDC$PzY.fwVJruRBFRAr0jhdbuqN5ffLOWI.xMT1Ul7LoED 
+ role network-admin
+username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 5334714A9797C356A98B7BD92492BFB5C9
+6A priv aes-128 495216725F0C4FCF324FEF40B42C6C645FEC localizedV2key
+snmp-server user admin priv-15
+snmp-server user cisco network-admin auth md5 365A519D86B48C58F7EEF3550BD8EECF8B
+FC priv aes-128 204F7AA2B6D1D30BE6A5B3240D86B28E8698 localizedV2key
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+vlan 1,101,201,300,400
+
+service dhcp
+ip dhcp relay
+ipv6 dhcp relay
+vrf context management
+
+[7m--More--[27m
+
+[K
+interface Vlan1
+
+interface Vlan101
+  description corp_data
+  no shutdown
+  ip address 10.101.10.254/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp 101 
+    ip 10.101.10.1
+  ip dhcp relay address 8.8.8.8 
+
+interface Vlan201
+  description corp_voice
+  no shutdown
+  ip address 10.201.10.254/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp 201 
+    ip 10.201.10.1
+  ip dhcp relay address 8.8.8.8 
+
+interface Vlan300
+  description wan
+[7m--More--[27m
+  no shutdown
+  ip address 10.20.10.7/31
+  ip router ospf 1 area 0.0.0.0
+
+interface Vlan400
+  description management_vlan
+  no shutdown
+  ip address 30.40.30.6/24
+  ip router ospf 1 area 0.0.0.0
+  hsrp version 2
+  hsrp 400 
+    ip 30.40.30.254
+
+interface port-channel1
+
+interface Ethernet1/1
+  switchport mode trunk
+
+interface Ethernet1/2
+  switchport mode trunk
+  switchport trunk allowed vlan 300
+
+interface Ethernet1/3
+[7m--More--[27m
+  switchport mode trunk
+
+interface Ethernet1/4
+  switchport access vlan 101
+
+interface Ethernet1/5
+  switchport mode trunk
+
+interface Ethernet1/6
+  switchport access vlan 201
+
+interface Ethernet1/7
+
+interface Ethernet1/8
+
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+[7m--More--[27m
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+interface Ethernet1/19
+
+interface Ethernet1/20
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+[7m--More--[27m
+
+[K
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+
+interface Ethernet1/31
+
+interface Ethernet1/32
+
+interface Ethernet1/33
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+[7m--More--[27m
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+interface Ethernet1/42
+
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+[7m--More--[27m
+
+[K
+interface Ethernet1/48
+
+interface Ethernet1/49
+
+interface Ethernet1/50
+
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+
+interface Ethernet1/54
+
+interface Ethernet1/55
+
+interface Ethernet1/56
+
+interface Ethernet1/57
+
+interface Ethernet1/58
+
+[7m--More--[27m
+interface Ethernet1/59
+
+interface Ethernet1/60
+
+interface Ethernet1/61
+
+interface Ethernet1/62
+
+interface Ethernet1/63
+
+interface Ethernet1/64
+
+interface mgmt0
+  vrf member management
+icam monitor scale
+
+line console
+  exec-timeout 0
+line vty
+  exec-timeout 0
+boot nxos bootflash:/nxos64-cs.10.3.1.F.bin 
+router ospf 1
+
+[7m--More--[27m
+no logging console
+
+
+
+l3_nxos_2# 
+249: UMAHAR-M-YYT9: 2023-12-06T21:49:18: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show run is =&gt; PASSED
+250: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %AETEST-6-INFO: %[part=250.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+251: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %AETEST-6-INF</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show int status</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:02</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 1428px;">250: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %AETEST-6-INFO: %[part=250.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+251: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %AETEST-6-INFO: %[part=250.2/3][pid=84986][pname=Task-1]: |                       Starting section show int status                       |
+252: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %AETEST-6-INFO: %[part=250.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+253: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l3_nxos_2
+254: UMAHAR-M-YYT9: 2023-12-06T21:49:19: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l3_nxos_2 with via &#39;cli&#39;: executing command &#39;show int status&#39; +++
+show int status
+
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+mgmt0         --                 connected routed    full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Eth1/1        --                 connected trunk     full    1000    10g        
+Eth1/2        --                 connected trunk     full    1000    10g        
+Eth1/3        --                 connected trunk     full    1000    10g        
+Eth1/4        --                 connected 101       full    1000    10g        
+Eth1/5        --                 connected trunk     full    1000    10g        
+Eth1/6        --                 connected 201       full    1000    10g        
+Eth1/7        --                 connected 1         full    1000    10g        
+Eth1/8        --                 notconnec 1         auto    auto    10g        
+Eth1/9        --                 notconnec 1         auto    auto    10g        
+Eth1/10       --                 notconnec 1         auto    auto    10g        
+Eth1/11       --                 notconnec 1         auto    auto    10g        
+Eth1/12       --                 notconnec 1         auto    auto    10g        
+Eth1/13       --                 notconnec 1         auto    auto    10g        
+Eth1/14       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/15       --                 notconnec 1         auto    auto    10g        
+Eth1/16       --                 notconnec 1         auto    auto    10g        
+Eth1/17       --                 notconnec 1         auto    auto    10g        
+Eth1/18       --                 notconnec 1         auto    auto    10g        
+Eth1/19       --                 notconnec 1         auto    auto    10g        
+Eth1/20       --                 notconnec 1         auto    auto    10g        
+Eth1/21       --                 notconnec 1         auto    auto    10g        
+Eth1/22       --                 notconnec 1         auto    auto    10g        
+Eth1/23       --                 notconnec 1         auto    auto    10g        
+Eth1/24       --                 notconnec 1         auto    auto    10g        
+Eth1/25       --                 notconnec 1         auto    auto    10g        
+Eth1/26       --                 notconnec 1         auto    auto    10g        
+Eth1/27       --                 notconnec 1         auto    auto    10g        
+Eth1/28       --                 notconnec 1         auto    auto    10g        
+Eth1/29       --                 notconnec 1         auto    auto    10g        
+Eth1/30       --                 notconnec 1         auto    auto    10g        
+Eth1/31       --                 notconnec 1         auto    auto    10g        
+Eth1/32       --                 notconnec 1         auto    auto    10g        
+Eth1/33       --                 notconnec 1         auto    auto    10g        
+Eth1/34       --                 notconnec 1         auto    auto    10g        
+Eth1/35       --                 notconnec 1         auto    auto    10g        
+Eth1/36       --                 notconnec 1         auto    auto    10g        
+Eth1/37       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/38       --                 notconnec 1         auto    auto    10g        
+Eth1/39       --                 notconnec 1         auto    auto    10g        
+Eth1/40       --                 notconnec 1         auto    auto    10g        
+Eth1/41       --                 notconnec 1         auto    auto    10g        
+Eth1/42       --                 notconnec 1         auto    auto    10g        
+Eth1/43       --                 notconnec 1         auto    auto    10g        
+Eth1/44       --                 notconnec 1         auto    auto    10g        
+Eth1/45       --                 notconnec 1         auto    auto    10g        
+Eth1/46       --                 notconnec 1         auto    auto    10g        
+Eth1/47       --                 notconnec 1         auto    auto    10g        
+Eth1/48       --                 notconnec 1         auto    auto    10g        
+Eth1/49       --                 notconnec 1         auto    auto    10g        
+Eth1/50       --                 notconnec 1         auto    auto    10g        
+Eth1/51       --                 notconnec 1         auto    auto    10g        
+Eth1/52       --                 notconnec 1         auto    auto    10g        
+Eth1/53       --                 notconnec 1         auto    auto    10g        
+Eth1/54       --                 notconnec 1         auto    auto    10g        
+Eth1/55       --                 notconnec 1         auto    auto    10g        
+Eth1/56       --                 notconnec 1         auto    auto    10g        
+Eth1/57       --                 notconnec 1         auto    auto    10g        
+Eth1/58       --                 notconnec 1         auto    auto    10g        
+Eth1/59       --                 notconnec 1         auto    auto    10g        
+Eth1/60       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/61       --                 notconnec 1         auto    auto    10g        
+Eth1/62       --                 notconnec 1         auto    auto    10g        
+Eth1/63       --                 notconnec 1         auto    auto    10g        
+Eth1/64       --                 notconnec 1         auto    auto    10g        
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Po1           --                 noOperMem 1         auto    auto    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Vlan1         --                 down      routed    auto    auto    --
+Vlan101       corp_data          connected routed    auto    auto    --
+Vlan201       corp_voice         connected routed    auto    auto    --
+Vlan300       wan                connected routed    auto    auto    --
+Vlan400       management_vlan    connected routed    auto    auto    --
+
+l3_nxos_2# 
+265: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show int status is =&gt; PASSED
+266: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <li>
+                <div id="script-1-test-5" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">l2_nxos_2</span>
+                    
+                    
+                    <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:06</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    <div class="row data-list mb-0 descr" style="display: none;">
+                        <div class="col s12">
+                            <span style="display: inline-block;"><b>Description:</b> <br />&emsp14;&emsp14;&emsp14;&emsp14;verify&emsp14;whether&emsp14;all&emsp14;cts&emsp14;pac&emsp14;and&emsp14;all&emsp14;cts&emsp14;environment&emsp14;data&emsp14;has&emsp14;been&emsp14;downloaded&emsp14;to&emsp14;the&emsp14;fabric&emsp14;nodes&emsp14;after&emsp14;provisioning<br />&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">setup</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">270: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=270.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+271: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=270.2/3][pid=84986][pname=Task-1]: |                            Starting section setup                            |
+272: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=270.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+273: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section setup is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show ip route</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 350px;">274: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=274.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+275: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=274.2/3][pid=84986][pname=Task-1]: |                        Starting section show ip route                        |
+276: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=274.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+277: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_2
+278: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_2 with via &#39;cli&#39;: executing command &#39;show ip route&#39; +++
+show ip route
+
+IP Route Table for VRF &#34;default&#34;
+&#39;*&#39; denotes best ucast next-hop
+&#39;**&#39; denotes best mcast next-hop
+&#39;[x/y]&#39; denotes [preference/metric]
+&#39;%&lt;string&gt;&#39; in via output denotes VRF &lt;string&gt;
+
+0.0.0.0/0, ubest/mbest: 1/0
+    *via 30.40.30.254, [1/0], 09:17:20, static
+30.40.30.0/24, ubest/mbest: 1/0, attached
+    *via 30.40.30.7, Vlan400, [0/0], 09:28:54, direct
+30.40.30.7/32, ubest/mbest: 1/0, attached
+    *via 30.40.30.7, Vlan400, [0/0], 09:28:54, local
+
+
+l2_nxos_2# 
+281: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show ip route is =&gt; PASSED
+282: UMAHAR-M-</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show run</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:04</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 3164px;">282: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=282.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+283: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=282.2/3][pid=84986][pname=Task-1]: |                          Starting section show run                           |
+284: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %AETEST-6-INFO: %[part=282.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+285: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_2
+286: UMAHAR-M-YYT9: 2023-12-06T21:49:21: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_2 with via &#39;cli&#39;: executing command &#39;show run&#39; +++
+show run
+
+
+!Command: show running-config
+!Running configuration last done at: Wed Dec  6 09:33:12 2023
+!Time: Wed Dec  6 18:04:48 2023
+
+version 10.3(1) Bios:version  
+hostname l2_nxos_2
+vdc l2_nxos_2 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature interface-vlan
+feature lacp
+
+no password strength-check
+username admin password 5 $5$BKHMEG$Pd7bDyVXXmLSYOgL7qA6Yjb/q58jMs9Ucdy.I5yeAT5 
+ role network-admin
+username admin role priv-15
+username cisco password 5 $5$BBGBHG$RerwjGV/cKwe/8mnqkQGR7J35so.m/.e4wtt.aVTd59 
+ role network-admin
+[7m--More--[27m
+username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 364B779C708620C6E4CA39B0E250FAFCCE
+63 priv aes-128 165B209E5DF553EAC4F91FF8EE40F6DCD474 localizedV2key
+snmp-server user admin priv-15
+snmp-server user cisco network-admin auth md5 365AC06D4DE18D38BE7E8376616389A83C
+A0 priv aes-128 177D9C5F49B1DD2FE03DE817376384E16EE1 localizedV2key
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+ip route 0.0.0.0/0 30.40.30.254
+vlan 1,101,201,400
+
+vrf context management
+
+interface Vlan1
+
+interface Vlan400
+  no shutdown
+[7m--More--[27m
+  ip address 30.40.30.7/24
+
+interface port-channel56
+  switchport mode trunk
+
+interface Ethernet1/1
+  switchport mode trunk
+
+interface Ethernet1/2
+  switchport access vlan 101
+
+interface Ethernet1/3
+  switchport mode trunk
+  switchport trunk allowed vlan 400
+
+interface Ethernet1/4
+  switchport mode trunk
+
+interface Ethernet1/5
+  switchport mode trunk
+  channel-group 56 mode active
+
+interface Ethernet1/6
+[7m--More--[27m
+  switchport mode trunk
+  channel-group 56 mode active
+
+interface Ethernet1/7
+  switchport access vlan 101
+
+interface Ethernet1/8
+
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+[7m--More--[27m
+
+[K
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+interface Ethernet1/19
+
+interface Ethernet1/20
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+[7m--More--[27m
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+
+interface Ethernet1/31
+
+interface Ethernet1/32
+
+interface Ethernet1/33
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+[7m--More--[27m
+
+[K
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+interface Ethernet1/42
+
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+
+interface Ethernet1/48
+
+interface Ethernet1/49
+
+interface Ethernet1/50
+
+[7m--More--[27m
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+
+interface Ethernet1/54
+
+interface Ethernet1/55
+
+interface Ethernet1/56
+
+interface Ethernet1/57
+
+interface Ethernet1/58
+
+interface Ethernet1/59
+
+interface Ethernet1/60
+
+interface Ethernet1/61
+
+interface Ethernet1/62
+[7m--More--[27m
+
+[K
+interface Ethernet1/63
+
+interface Ethernet1/64
+
+interface mgmt0
+  vrf member management
+icam monitor scale
+
+line console
+  exec-timeout 0
+line vty
+  exec-timeout 0
+boot nxos bootflash:/nxos64-cs.10.3.1.F.bin 
+
+no logging console
+
+
+
+l2_nxos_2# 
+297: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show run is =&gt; PASSED
+298: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %AETEST-6-INFO: %[part=298.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+299: UMAHAR-M-YYT9: 202</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">show int status</span>
+                                
+                                <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:01</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <div class="row data-list mb-0 descr" style="display: none;">
+                                    <div class="col s12">
+                                        <span style="display: inline-block;"><b>Description:</b> &emsp14;tests&emsp14;whether&emsp14;cts&emsp14;pacs&emsp14;were&emsp14;uploaded&emsp14;to&emsp14;fabric&emsp14;node&emsp14;</span>
+                                    </div>
+                                </div>
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 1386px;">298: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %AETEST-6-INFO: %[part=298.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+299: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %AETEST-6-INFO: %[part=298.2/3][pid=84986][pname=Task-1]: |                       Starting section show int status                       |
+300: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %AETEST-6-INFO: %[part=298.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+301: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %SCRIPT-6-INFO: %[pid=84986][pname=Task-1]: test check cts pacs are uploaded on fabric node =l2_nxos_2
+302: UMAHAR-M-YYT9: 2023-12-06T21:49:26: %UNICON-6-INFO: %[pid=84986][pname=Task-1]: +++ l2_nxos_2 with via &#39;cli&#39;: executing command &#39;show int status&#39; +++
+show int status
+
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+mgmt0         --                 connected routed    full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Eth1/1        --                 connected trunk     full    1000    10g        
+Eth1/2        --                 connected 101       full    1000    10g        
+Eth1/3        --                 connected trunk     full    1000    10g        
+Eth1/4        --                 connected trunk     full    1000    10g        
+Eth1/5        --                 connected trunk     full    1000    10g        
+Eth1/6        --                 connected trunk     full    1000    10g        
+Eth1/7        --                 connected 101       full    1000    10g        
+Eth1/8        --                 notconnec 1         auto    auto    10g        
+Eth1/9        --                 notconnec 1         auto    auto    10g        
+Eth1/10       --                 notconnec 1         auto    auto    10g        
+Eth1/11       --                 notconnec 1         auto    auto    10g        
+Eth1/12       --                 notconnec 1         auto    auto    10g        
+Eth1/13       --                 notconnec 1         auto    auto    10g        
+Eth1/14       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/15       --                 notconnec 1         auto    auto    10g        
+Eth1/16       --                 notconnec 1         auto    auto    10g        
+Eth1/17       --                 notconnec 1         auto    auto    10g        
+Eth1/18       --                 notconnec 1         auto    auto    10g        
+Eth1/19       --                 notconnec 1         auto    auto    10g        
+Eth1/20       --                 notconnec 1         auto    auto    10g        
+Eth1/21       --                 notconnec 1         auto    auto    10g        
+Eth1/22       --                 notconnec 1         auto    auto    10g        
+Eth1/23       --                 notconnec 1         auto    auto    10g        
+Eth1/24       --                 notconnec 1         auto    auto    10g        
+Eth1/25       --                 notconnec 1         auto    auto    10g        
+Eth1/26       --                 notconnec 1         auto    auto    10g        
+Eth1/27       --                 notconnec 1         auto    auto    10g        
+Eth1/28       --                 notconnec 1         auto    auto    10g        
+Eth1/29       --                 notconnec 1         auto    auto    10g        
+Eth1/30       --                 notconnec 1         auto    auto    10g        
+Eth1/31       --                 notconnec 1         auto    auto    10g        
+Eth1/32       --                 notconnec 1         auto    auto    10g        
+Eth1/33       --                 notconnec 1         auto    auto    10g        
+Eth1/34       --                 notconnec 1         auto    auto    10g        
+Eth1/35       --                 notconnec 1         auto    auto    10g        
+Eth1/36       --                 notconnec 1         auto    auto    10g        
+Eth1/37       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/38       --                 notconnec 1         auto    auto    10g        
+Eth1/39       --                 notconnec 1         auto    auto    10g        
+Eth1/40       --                 notconnec 1         auto    auto    10g        
+Eth1/41       --                 notconnec 1         auto    auto    10g        
+Eth1/42       --                 notconnec 1         auto    auto    10g        
+Eth1/43       --                 notconnec 1         auto    auto    10g        
+Eth1/44       --                 notconnec 1         auto    auto    10g        
+Eth1/45       --                 notconnec 1         auto    auto    10g        
+Eth1/46       --                 notconnec 1         auto    auto    10g        
+Eth1/47       --                 notconnec 1         auto    auto    10g        
+Eth1/48       --                 notconnec 1         auto    auto    10g        
+Eth1/49       --                 notconnec 1         auto    auto    10g        
+Eth1/50       --                 notconnec 1         auto    auto    10g        
+Eth1/51       --                 notconnec 1         auto    auto    10g        
+Eth1/52       --                 notconnec 1         auto    auto    10g        
+Eth1/53       --                 notconnec 1         auto    auto    10g        
+Eth1/54       --                 notconnec 1         auto    auto    10g        
+Eth1/55       --                 notconnec 1         auto    auto    10g        
+Eth1/56       --                 notconnec 1         auto    auto    10g        
+Eth1/57       --                 notconnec 1         auto    auto    10g        
+Eth1/58       --                 notconnec 1         auto    auto    10g        
+Eth1/59       --                 notconnec 1         auto    auto    10g        
+Eth1/60       --                 notconnec 1         auto    auto    10g        
+[7m--More--[27m
+Eth1/61       --                 notconnec 1         auto    auto    10g        
+Eth1/62       --                 notconnec 1         auto    auto    10g        
+Eth1/63       --                 notconnec 1         auto    auto    10g        
+Eth1/64       --                 notconnec 1         auto    auto    10g        
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Po56          --                 connected trunk     full    1000    --         
+
+--------------------------------------------------------------------------------
+Port          Name               Status    Vlan      Duplex  Speed   Type
+--------------------------------------------------------------------------------
+Vlan1         --                 down      routed    auto    auto    --
+Vlan400       --                 connected routed    auto    auto    --
+
+l2_nxos_2# 
+317: UMAHAR-M-YYT9: 2023-12-06T21:49:27: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of section show int status is =&gt; PASSED
+318: UMAHAR-M-YYT9: 2023-12-06T21:49:27: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: </pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+            
+            <li>
+                <div id="script-1-test-6" class="collapsible-header passed">
+                    <!-- <i class="small material-icons state">brightness_1</i> -->
+                    <i class="material-icons">arrow_drop_down</i>
+                    
+                    <span class="title">common_cleanup</span>
+                    
+                    
+                    <a class="toggle-data not-collapse" href="#!" data-function="toggler" data-target="descr">Description</a>
+                    
+                    
+                    <div class="not-collapse expand">
+                        <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                        <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                    </div>
+                    <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                    <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                </div>
+                <div class="collapsible-body">
+                    
+                    <div class="row data-list mb-0 descr" style="display: none;">
+                        <div class="col s12">
+                            <span style="display: inline-block;"><b>Description:</b> CommonCleanup&emsp14;Section<br />&emsp14;&emsp14;&emsp14;&emsp14;Cleans&emsp14;up&emsp14;the&emsp14;code&emsp14;and&emsp14;reports&emsp14;metrics<br />&emsp14;&emsp14;&emsp14;&emsp14;</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Sections -->
+                    <ul class="collapsible lean" data-collapsible="expandable">
+
+                        
+
+                        <!-- Section-1 -->
+                        <li class="section">
+                            <div class="collapsible-header passed">
+                                <!-- <i class="small material-icons state">brightness_1</i> -->
+                                <i class="material-icons">arrow_drop_down</i>
+                                <span class="title">subsection_reporting</span>
+                                
+                                <div class="not-collapse expand">
+                                    <i class="material-icons all tooltipped" data-position="top" data-delay="30" data-tooltip="expand all">expand_more</i>
+                                    <i class="material-icons none tooltipped" data-position="top" data-delay="30" data-tooltip="collapse all">expand_less</i>
+                                </div>
+                                <span class="new badge ml-1" data-badge-caption="">PASSED</span>
+                                <span class="new badge time ml-1" data-badge-caption="">0:00:00</span>
+                            </div>
+                            <div class="collapsible-body">
+                                
+                                <ul class="collapsible lean" data-collapsible="expandable">
+                                    <!-- Steps -->
+                                    
+
+                                    <!-- log -->
+                                    <li class="logs">
+                                        <div class="collapsible-header passed">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                            <span class="title"><b>Section Logs</b></span>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <pre class="editor" style="height: 84px;">322: UMAHAR-M-YYT9: 2023-12-06T21:49:28: %AETEST-6-INFO: %[part=322.1/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+323: UMAHAR-M-YYT9: 2023-12-06T21:49:28: %AETEST-6-INFO: %[part=322.2/3][pid=84986][pname=Task-1]: |                   Starting subsection subsection_reporting                   |
+324: UMAHAR-M-YYT9: 2023-12-06T21:49:28: %AETEST-6-INFO: %[part=322.3/3][pid=84986][pname=Task-1]: +------------------------------------------------------------------------------+
+325: UMAHAR-M-YYT9: 2023-12-06T21:49:28: %AETEST-6-INFO: %[pid=84986][pname=Task-1]: The result of subsection subsection_reporting is =&gt; PASSED
+</pre>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</li>
+
+
+                </ul>
+            </div>
+        </div>
+        </div>
+
+        <div class="fixed-action-btn">
+		    <a class="btn-floating btn-large waves-effect waves-light red scrollToTop" style="display: none;">
+		      <i class="large material-icons">arrow_upward</i>
+		    </a>
+		</div>
+    </main>
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+    <!-- <script src="https://www.amcharts.com/lib/3/serial.js"></script> -->
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+    <!-- AceEditor -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+
+
+    // Strip whitespace from Ace Editor text
+	var p = document.getElementsByClassName("editor");
+	for (i = 0; i < p.length; i++) {
+		p[i].textContent = p[i].textContent.replace(/^\s+/mg, "");
+	};
+
+	// Initialize Ace Editor for all .editor elements
+    var editor;
+    $('.editor').each(function( index ) {
+    	editor = ace.edit(this);
+
+    	editor.setOptions({
+	    	readOnly: true,
+	    	showLineNumbers: false,
+	    	showGutter: false,
+	    	showPrintMargin: false,
+	    });
+		editor.setTheme("ace/theme/chrome");
+    });
+
+
+    // Initialize collapse button and collapsible accordion
+    $(".button-collapse").sideNav();
+    $('.collapsible').collapsible();
+
+
+    // Open parent collapsibles when child collapsible is opened
+    $('[data-click]').on('click', function(e) {
+        var el = $($(this).attr('href'));
+        var oneUp = $(el).closest('.collapsible-body').prev('.collapsible-header');
+        var twoUp = $(oneUp).closest('.collapsible-body').prev('.collapsible-header');
+
+        $(el).trigger('click');
+        $.each([oneUp, twoUp], function(i, val) {
+            if (!$(val).hasClass('active'))
+                $(val).trigger('click');
+        });
+
+        // close sidenav on link click
+        $(this).sideNav('hide');
+    });
+
+
+    // Stop collapse event from actions clicked inside collapsible headers
+    $(".not-collapse").on("click", function(e) { e.stopPropagation(); });
+
+    // Expand or Collapse sections by trigerring a click
+    $('.expand i').on('click', function(e) {
+    	var parent, all, el;
+
+    	el = $(this);
+		parent = el.closest('.collapsible-header');
+		all = parent.next('.collapsible-body')
+				    .find('.collapsible-header');
+
+		if ( el.closest('.side-nav').length !== 0 ) {
+			headers = $('.side-nav .collapsible-header');
+
+			if ( el.hasClass('all') && !headers.hasClass('active'))
+				headers.trigger('click');
+			else if ( el.hasClass('none') && headers.hasClass('active') )
+				headers.trigger('click');
+		}
+
+		// check if the click is to expand all sections
+     	else if ( el.hasClass('all') ) {
+    		all.each( function() {
+    			if ( !$(this).hasClass('active') )
+    				$(this).trigger('click');
+    		});
+    		if ( !parent.hasClass('active') )
+    			parent.trigger('click');
+    	}
+
+    	// check if the click is to collapse all sections
+    	else if ( el.hasClass('none') ) {
+    		all.each( function() {
+    			if ( $(this).hasClass('active') )
+    				$(this).trigger('click');
+    		});
+    		// close the parent collapse section if it's open
+    		if ( parent.hasClass('active') )
+    			parent.trigger('click');
+    	}
+    });
+
+
+	// Toggle scrollToTop button visibility based on scroll
+	$(document).ready(function(){
+		//Check to see if the window is top if not then display button
+		$(window).scroll(function(){
+			if ($(this).scrollTop() > 100)
+				$('.scrollToTop').fadeIn();
+			else
+				$('.scrollToTop').fadeOut();
+		});
+		//Click event to scroll to top
+		$('.scrollToTop').click(function(){
+			$('html, body').animate({scrollTop : 0},800);
+			return false;
+		});
+	});
+
+
+	// Setup custom collapse sections
+	$('[data-function="toggler"]').on('click', function (e) {
+	    var el = $(this);
+	    var header = el.closest('.collapsible-header');
+		var collapse;
+
+		// check the data-target, find that first child, then
+		// assign for toggling
+	    if (el.attr('data-target') == 'descr') {
+	    	if (header.next('.collapsible-body').length !== 0){
+	    		console.log(header.next('.collapsible-body'))
+	    		collapse = header.next('.collapsible-body').find('.descr').first();
+	    	}
+	    	else
+	    		collapse = header.next('.descr');
+	    }
+	    else if (el.attr('data-target') == 'meta')
+	    	collapse = header.next('.collapsible-body').find('.meta').first();
+
+	    if (!header.hasClass('active'))
+	    	header.trigger('click');
+
+     	collapse.slideToggle();
+	});
+
+	// Setup the Pie Chart
+    var chart = AmCharts.makeChart("chartdiv", {
+	  "type": "pie",
+	  "startDuration": 0,
+	   "theme": "light",
+	  "addClassNames": true,
+	  "legend":{
+	   	"position":"right",
+	    "marginRight":100,
+	    "autoMargins":false
+	  },
+	  "innerRadius": "30%",
+	  "defs": {
+	    "filter": [{
+	      "id": "shadow",
+	      "width": "200%",
+	      "height": "200%",
+	      "feOffset": {
+	        "result": "offOut",
+	        "in": "SourceAlpha",
+	        "dx": 0,
+	        "dy": 0
+	      },
+	      "feGaussianBlur": {
+	        "result": "blurOut",
+	        "in": "offOut",
+	        "stdDeviation": 5
+	      },
+	      "feBlend": {
+	        "in": "SourceGraphic",
+	        "in2": "blurOut",
+	        "mode": "normal"
+	      }
+	    }]
+	  },
+	  "dataProvider": [{
+            "status": "passed",
+            "count": 6,
+            "color": "rgb(0, 170, 0)" //#00AA00
+        }, {
+            "status": "passx",
+            "count": 0,
+            "color": "rgb(0, 170, 187)" //#00AABB
+        }, {
+            "status": "failed",
+            "count": 0,
+            "color": "rgb(255, 0, 0)" //#FF0000
+        }, {
+            "status": "errored",
+            "count": 0,
+            "color": "rgb(223, 1, 215)" //#DF01D7
+        }, {
+            "status": "aborted",
+            "count": 0,
+            "color": "rgb(0, 0, 0)" //#000000
+        }, {
+            "status": "blocked",
+            "count": 0,
+            "color": "rgb(161, 10, 40)" //#A10A28
+        }, {
+            "status": "skipped",
+            "count": 0,
+            "color": "rgb(110, 110, 110)" //#6E6E6E
+        }],
+	  "valueField": "count",
+	  "titleField": "status",
+	  "colorField": "color",
+	  "export": {
+	    "enabled": true
+	  }
+	});
+
+	chart.addListener("init", handleInit);
+
+	chart.addListener("rollOverSlice", function(e) {
+	  handleRollOver(e);
+	});
+
+	function handleInit(){
+	  chart.legend.addListener("rollOverItem", handleRollOver);
+	}
+
+	function handleRollOver(e){
+	  var wedge = e.dataItem.wedge.node;
+	  wedge.parentNode.appendChild(wedge);
+	}
+    </script>
+</body>
+
+</html>

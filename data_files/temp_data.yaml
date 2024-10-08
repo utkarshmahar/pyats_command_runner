@@ -1,0 +1,40 @@
+extends: scripts/data.yaml 
+parameters:
+  commands:
+  - show ip int br
+  - show run
+  - show ip route
+  - show cdp neighbor
+  network_devices:
+  - sing_bn_1
+  - sing_bn_2
+extends: scripts/data.yaml 
+parameters:
+  commands:
+  - show ip int br
+  - show run
+  - show ip route
+  - show cdp neighbor
+  network_devices:
+  - sing_bn_1
+  - sing_bn_2
+extends: scripts/data.yaml 
+parameters:
+  commands:
+  - show ip int br
+  - show run
+  - show ip route
+  - show cdp neighbor
+  network_devices:
+  - sing_bn_1
+  - sing_bn_2
+extends: scripts/data.yaml 
+parameters:
+  commands:
+  - show ip int br
+  - show run
+  - show ip route
+  - show cdp neighbor
+  network_devices:
+  - sing_bn_1
+  - sing_bn_2

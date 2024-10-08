@@ -1,0 +1,28 @@
+devices:
+  local_linux:
+    connections:
+      cli:
+        command: bash
+        ip: 127.0.0.1
+        protocols: ssh
+    os: linux
+    type: linux
+  sing_bn_1:
+    connections:
+      cli:
+        ip: 10.10.10.1
+        protocol: ssh
+    os: iosxe
+    type: iosxe
+  sing_bn_2:
+    connections:
+      cli:
+        ip: 10.10.10.2
+        protocol: ssh
+    os: iosxe
+    type: iosxe
+testbed:
+  credentials:
+    default:
+      password: '%ASK{}'
+      username: '%ASK{}'
