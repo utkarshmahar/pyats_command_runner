@@ -16,7 +16,7 @@ import logging
 
 from pyats import aetest
 from pyats.log.utils import banner
-
+import socket
 # create a logger for this module
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,10 @@ class CommonSetup(aetest.CommonSetup):
         for device in network_devices:
             try: 
              logger.info("Connecting to network_devices: "+device)
+             ip = str(testbed.devices[device].connections.cli.ip)
+             socket.create_connection((ip,"22"),timeout=1) 
              self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
+             print
              self.parent.connected_devices.append(device) 
             except:
               self.parent.not_connected_devices.append(device)

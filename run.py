@@ -6,7 +6,7 @@ import yaml
 import openpyxl,requests
 from datetime import datetime
 now = datetime.now()
-
+import socket
 dt_string = now.strftime("%d-%m-%H-%M-%S")
 
 
