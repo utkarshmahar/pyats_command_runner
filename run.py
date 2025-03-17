@@ -188,7 +188,7 @@ def download_file():
          with open(args.webex, 'r') as f:    
           o = yaml.full_load(f)["WEBEX"]
           try: 
-           api = WebexTeamsAPI(access_token=o["WEBEX_BOT_TOKEN"])
+           api = WebexTeamsAPI(access_token=o["WEBEX_BOT_TOKEN"],proxies={"https": o["PROXY"]})
           except:
            api = WebexTeamsAPI(access_token=o["WEBEX_BOT_TOKEN"])  
           messages = api.messages.list(roomId=o["1_1_BOT_ROOM_ID"])
