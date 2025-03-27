@@ -75,7 +75,7 @@ class CommonSetup(aetest.CommonSetup):
              logger.info(f"connecting to device {device}")
              self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
              if testbed.devices[device].connected:
-              logger.info(f"SSH to device {device} failed")  
+              logger.info(f"SSH to device {device} was successful")  
               self.parent.connected_devices.append(device) 
              else:
                logger.info(f"SSH to device {device} failed") 

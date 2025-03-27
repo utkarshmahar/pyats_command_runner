@@ -2,6 +2,7 @@ from webexteamssdk import WebexTeamsAPI
 import os
 import sys
 import argparse
+import pprint
 import yaml
 import openpyxl,requests
 from datetime import datetime
@@ -147,7 +148,8 @@ def process_data_file(excel_file_path, sheet_name):
 def build_testbed() :
     global testbed
     global proxy
-    print(proxy)
+    print("device connections")
+    pprint.pprint(proxy)
     if ".xlsx" in testbed or ".csv" in testbed:
         new_testbed = "testbeds/" + testbed.split(".")[0] + ".yaml"
         os.system(f"pyats create testbed file --path testbeds/{testbed} --output {new_testbed}")
@@ -158,7 +160,7 @@ def build_testbed() :
              
         for device, device_data in dict["devices"].items():
             device_data.pop('credentials')
-            if ssh_options :
+            if ssh_options and proxy[device] == None:
              device_data["connections"]["cli"]["ssh_options"] = ssh_options
             if proxy[device] != None:
              device_data["connections"]["cli"]["proxy"] =  proxy[device]
