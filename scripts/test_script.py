@@ -59,6 +59,7 @@ class CommonSetup(aetest.CommonSetup):
               testbed.devices[device].disconnect()
               logger.info(f"Connection to {device} via proxy disconnected") 
              else:
+              testbed.devices[device].disconnect()
               logger.info(f"Connection to {device} via proxy failed") 
               self.parent.not_connected_devices = self.parent.not_connected_devices + "\n" + device
               logger.info(f"Connection to {device} via proxy failed") 
