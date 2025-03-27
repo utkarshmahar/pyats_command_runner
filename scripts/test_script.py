@@ -37,46 +37,91 @@ class CommonSetup(aetest.CommonSetup):
         self.parent.testbed = testbed
         self.parent.commands = commands
         self.parent.connected_devices = []
-        self.parent.not_connected_devices = []      
-        final_list = " "  
-        for device in network_devices:
-            try: 
-             logger.info("Connecting to network_devices: "+device)
-             ip = str(testbed.devices[device].connections.cli.ip)
-             socket.create_connection((ip,"22"),timeout=1) 
-             self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
-             print
-             self.parent.connected_devices.append(device) 
-            except:
-              self.parent.not_connected_devices.append(device)
-              final_list = final_list + "\n" + device       
-        print("Connection to "+device+" failed")
-        self.passed("---------------SSH to Below Devices Failed-------------"+final_list)
+        self.parent.devices_via_proxy_obj = []
+        self.parent.devices_with_no_ssh = " "
+        self.parent.not_connected_devices = " "
+        self.parent.devices_via_proxy = " " 
 
+        for device in network_devices:
+          logger.info("Connecting to network_device: "+device) 
+          ip = str(testbed.devices[device].connections.cli.ip)
+          ssh_enabled = False
+          if 'proxy' in dict(testbed.devices[device].connections.cli) :
+             logger.info("Device "+ device + " to be connected via proxy ") 
+             self.parent.devices_via_proxy = self.parent.devices_via_proxy + "\n" + device
+             self.parent.devices_via_proxy_obj.append(device) 
+             logger.info("Connecting to " + device +"proxy") 
+             self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
+             if testbed.devices[device].connected:
+              logger.info(f"Connection to {device} via proxy successful") 
+              self.parent.connected_devices.append(device)
+              testbed.devices[device].disconnect()
+              logger.info(f"Connection to {device} via proxy disconnected") 
+             else:
+              logger.info(f"Connection to {device} via proxy failed") 
+              self.parent.not_connected_devices = self.parent.not_connected_devices + "\n" + device
+              logger.info(f"Connection to {device} via proxy failed") 
+ 
+          else:
+            logger.info("Connecting to " + device +"without proxy") 
+            try:
+             socket.create_connection((ip,"22"),timeout=1) 
+             logger.info(f"port 22 on device {device} open")
+             ssh_enabled = True
+            except:
+             logger.info(f"port 22 on device {device} closed")
+             self.parent.devices_with_no_ssh = self.parent.devices_with_no_ssh + "\n" + device 
+          if ssh_enabled:
+             logger.info(f"connecting to device {device}")
+             self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
+             if testbed.devices[device].connected:
+              logger.info(f"SSH to device {device} failed")  
+              self.parent.connected_devices.append(device) 
+             else:
+               logger.info(f"SSH to device {device} failed") 
+               self.parent.not_connected_devices = self.parent.not_connected_devices + "\n" + device
+
+     
+        logger.info("---------------No port 22 enabled on below devices-------------"+self.parent.devices_with_no_ssh)
+        logger.info("---------------SSH to Below Devices Failed-------------"+self.parent.not_connected_devices)
+        logger.info("---------------SSH to Below Devices Require proxy-------------" + self.parent.devices_via_proxy)
+        
     @aetest.subsection
     def setup(self):
-        aetest.loop.mark(Devices, uids=self.parent.connected_devices)
+        logger.info(self.parent.connected_devices)
+        aetest.loop.mark(Devices, uids=(self.parent.connected_devices))
+       
 
 
 class Devices(aetest.Testcase):
-    """
-    verify whether all cts pac and all cts environment data has been downloaded to the fabric nodes after provisioning
-    """
+    
 
     @aetest.setup
     def setup(self):
         device = self.uid
         device_obj = self.parent.testbed.devices[self.uid]
-        aetest.loop.mark(self.show_command,uids=self.parent.commands)
-
-
+        if device_obj.connected: 
+         logger.info(device+ "in connected mode")
+         aetest.loop.mark(self.show_command,uids=self.parent.commands)
+        else:
+            logger.info(f"{device} in diconnected mode")
+            logger.info("connecting again")
+            device_obj.connect(init_exec_commands=[], init_config_commands=[],learn_hostname = True)
+            aetest.loop.mark(self.show_command,uids=self.parent.commands)
+         
     @aetest.test
     def show_command(self,section):
-        """ tests whether cts pacs were uploaded to fabric node """
-        logger.info("test check cts pacs are uploaded on fabric node =" + self.uid)
+    
+        logger.info("Applying command " + section.uid)
         device_obj = self.parent.testbed.devices[self.uid]
         output = device_obj.execute(section.uid)
         #self.passed(banner(output))
+
+    @aetest.cleanup
+    def disconnect(self):
+        
+        logger.info("Disconnecting " )
+        self.parent.testbed.devices[self.uid].disconnect()  
 
 
 class CommonCleanup(aetest.CommonCleanup):
@@ -87,7 +132,11 @@ class CommonCleanup(aetest.CommonCleanup):
     # report metrics
     @aetest.subsection
     def subsection_reporting(self):
-        pass
+          
+        logger.info("---------------No port 22 enabled on below devices-------------"+self.parent.devices_with_no_ssh)
+        logger.info("---------------SSH to Below Devices Failed-------------"+self.parent.not_connected_devices)
+        logger.info("---------------SSH to Below Devices Require proxy-------------" + self.parent.devices_via_proxy)
+        
 
 
 

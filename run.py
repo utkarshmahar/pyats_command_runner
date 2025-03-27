@@ -29,10 +29,13 @@ sheet = args.worksheet
 ssh_options = args.ssh_options
 file_name = input_file.split(".xlsx")[0]
 job_name = f"{file_name}_{sheet}__{dt_string}"
+proxy = {}
 
 
 def process_testbed(input_file_path):
     global testbed 
+    global proxy
+    print(proxy)
     output_file_path = input_file_path.split(".xlsx")[0]+"_testbed.xlsx"
     testbed = output_file_path
     try:
@@ -46,7 +49,7 @@ def process_testbed(input_file_path):
         sheet = workbook[input_sheet_name]
 
         # Validate headers
-        expected_headers = ['hostname', 'ip', 'os']
+        expected_headers = ['hostname', 'ip', 'os','proxy']
         actual_headers = [cell.value.lower() for cell in sheet[1]]
         
         if expected_headers != actual_headers:
@@ -69,6 +72,8 @@ def process_testbed(input_file_path):
             new_sheet.cell(row=row_num, column=4, value='do not leave blank')  # Password
             new_sheet.cell(row=row_num, column=5, value='ssh')  # Protocol
             new_sheet.cell(row=row_num, column=6, value=sheet.cell(row=row_num, column=3).value)  # OS
+            proxy[sheet.cell(row=row_num, column=1).value]=sheet.cell(row=row_num, column=4).value
+        
 
         # Save the new workbook
         new_workbook.save("testbeds/"+output_file_path)
@@ -141,20 +146,26 @@ def process_data_file(excel_file_path, sheet_name):
         print(f"Error: {e}")
 def build_testbed() :
     global testbed
-    
+    global proxy
+    print(proxy)
     if ".xlsx" in testbed or ".csv" in testbed:
         new_testbed = "testbeds/" + testbed.split(".")[0] + ".yaml"
         os.system(f"pyats create testbed file --path testbeds/{testbed} --output {new_testbed}")
         with open(new_testbed) as r:
             dict = yaml.safe_load(r)
             dict["testbed"] = {'credentials': {'default': {'username': "%ASK{}", 'password': "%ASK{}"}}}
+            #dict["testbed"] = {'credentials': {'default': {'username': "admin", 'password': "default1A"}}}
+             
         for device, device_data in dict["devices"].items():
             device_data.pop('credentials')
             if ssh_options :
              device_data["connections"]["cli"]["ssh_options"] = ssh_options
+            if proxy[device] != None:
+             device_data["connections"]["cli"]["proxy"] =  proxy[device]
         linux_device = {'local_linux': {'os': 'linux', 'type': 'linux', 'connections': {
             'cli': {'protocols': 'ssh', 'ip': '127.0.0.1', 'command': 'bash'}}}}
         dict['devices'].update(linux_device)
+        
         with open(new_testbed, 'w') as w:
             yaml.dump(dict, w)
         testbed = new_testbed
