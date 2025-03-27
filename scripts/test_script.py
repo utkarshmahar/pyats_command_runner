@@ -19,7 +19,7 @@ from pyats.log.utils import banner
 import socket
 # create a logger for this module
 logger = logging.getLogger(__name__)
-
+import pprint
 
 class CommonSetup(aetest.CommonSetup):
     @aetest.subsection
@@ -41,7 +41,10 @@ class CommonSetup(aetest.CommonSetup):
         self.parent.devices_with_no_ssh = " "
         self.parent.not_connected_devices = " "
         self.parent.devices_via_proxy = " " 
-
+        ''' 
+        If a device is connected via a proxy but encounters errors like "Host unreachable" or "Host not responding," it may still appear as connected.
+        To accurately determine the device's state, the connection output must not contain strings such as "Destination unreachable" or "Remote host not responding.
+        '''
         for device in network_devices:
           logger.info("Connecting to network_device: "+device) 
           ip = str(testbed.devices[device].connections.cli.ip)
@@ -51,18 +54,28 @@ class CommonSetup(aetest.CommonSetup):
              self.parent.devices_via_proxy = self.parent.devices_via_proxy + "\n" + device
              self.parent.devices_via_proxy_obj.append(device) 
              logger.info("Connecting to " + device +"proxy") 
-             self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
-             logger.info(str(testbed.devices[device].hostname)) 
-             if testbed.devices[device].connected and str(testbed.devices[device].hostname) == device:
-              logger.info(f"Connection to {device} via proxy successful") 
-              self.parent.connected_devices.append(device)
-              testbed.devices[device].disconnect()
-              logger.info(f"Connection to {device} via proxy disconnected") 
+             dev = testbed.devices[device]
+             connection_output = testbed.connect(testbed.devices[device],init_exec_commands=[], init_config_commands=[],learn_hostname = True)
+                 
+             if dev.connected :
+              false_positive_strings = ["Connection timed out","Destination unreachable"]
+              logger.info(connection_output[0])
+              if any(item in connection_output[0] for item in false_positive_strings):
+                   logger.info(f"Connection to {device} via proxy failed") 
+                   self.parent.not_connected_devices = self.parent.not_connected_devices + "\n" + device
+                   testbed.devices[device].disconnect()
+                
+              else:
+                     testbed.devices[device].disconnect()
+                     logger.info(f"Connection to {device} via proxy successful") 
+                     logger.info(f"Disconnecting from {device}") 
+                     self.parent.connected_devices.append(device)
+                
              else:
               testbed.devices[device].disconnect()
-              logger.info(f"Connection to {device} via proxy failed") 
+              logger.info(f"Connection to {device} via proxy failed, wrong credentials") 
               self.parent.not_connected_devices = self.parent.not_connected_devices + "\n" + device
-              logger.info(f"Connection to {device} via proxy failed") 
+              
  
           else:
             logger.info("Connecting to " + device +"without proxy") 
