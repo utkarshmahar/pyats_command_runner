@@ -52,7 +52,8 @@ class CommonSetup(aetest.CommonSetup):
              self.parent.devices_via_proxy_obj.append(device) 
              logger.info("Connecting to " + device +"proxy") 
              self.parent.testbed.connect(testbed.devices[device], init_exec_commands=[], init_config_commands=[],learn_hostname = True)
-             if testbed.devices[device].connected:
+             logger.info(str(testbed.devices[device].hostname)) 
+             if testbed.devices[device].connected and str(testbed.devices[device].hostname) == device:
               logger.info(f"Connection to {device} via proxy successful") 
               self.parent.connected_devices.append(device)
               testbed.devices[device].disconnect()
